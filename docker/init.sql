@@ -1,0 +1,7 @@
+CREATE user toki_user;
+
+CREATE DATABASE toki;
+GRANT ALL PRIVILEGES ON DATABASE toki TO toki_user;
+
+CREATE DATABASE toki_shadow;
+GRANT ALL PRIVILEGES ON DATABASE toki_shadow TO toki_user;

@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: toki-pass
+      POSTGRES_DB: toki
+    ports:
+      - "5432:5432"
+
+  db-shadow:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: toki-pass
+      POSTGRES_DB: toki-shadow
+    ports:
+      - "5433:5432"
