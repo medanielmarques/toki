@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "presentation": {
+    "echo": false,
+    "reveal": "always",
+    "focus": false,
+    "panel": "dedicated",
+    "showReuseMessage": true
+  },
+  "tasks": [
+    {
+      "label": "Launch Toki Development terminals",
+      "dependsOn": ["toki-app", "docker-postgres", "Prisma Studio(5555)"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "toki-app",
+      "type": "shell",
+      "command": "pnpm dev",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-postgres",
+      "type": "shell",
+      "command": "docker compose up",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Prisma Studio(5555)",
+      // "dependsOn": ["docker-postgres"],
+      "type": "shell",
+      "command": "pnpm prisma-studio",
+      "isBackground": false,
+      "problemMatcher": []
+    }
+  ]
+}

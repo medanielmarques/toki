@@ -7,10 +7,28 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
+model Timer {
+    id                String @id @default(cuid())
+    pomodoro_count    Int    @default(0)
+    short_break_count Int    @default(0)
+    long_break_count  Int    @default(0)
+
+    // 1000 * 60 * 25 -> 1_500_000 miliseconds -> 25 minutes
+    // 1000 * 60 * 5 -> 300_000 miliseconds -> 5 minutes
+    // 1000 * 60 * 15 -> 900_000 miliseconds -> 15 minutes
+    pomodoro_time    Int @default(1500000)
+    short_break_time Int @default(300000)
+    long_break_time  Int @default(900000)
+
+    long_break_interval  Int     @default(4)
+    auto_start_pomodoros Boolean
+    auto_start_breaks    Boolean
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    user_id String @unique
 }
 
 model Account {
@@ -47,6 +65,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Timer         Timer?
 }
 
 model VerificationToken {

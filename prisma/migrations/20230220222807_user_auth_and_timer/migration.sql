@@ -1,10 +1,20 @@
 -- CreateTable
-CREATE TABLE "Example" (
+CREATE TABLE "Timer" (
     "id" TEXT NOT NULL,
+    "pomodoro_count" INTEGER NOT NULL DEFAULT 0,
+    "short_break_count" INTEGER NOT NULL DEFAULT 0,
+    "long_break_count" INTEGER NOT NULL DEFAULT 0,
+    "pomodoro_time" INTEGER NOT NULL DEFAULT 1500000,
+    "short_break_time" INTEGER NOT NULL DEFAULT 300000,
+    "long_break_time" INTEGER NOT NULL DEFAULT 900000,
+    "long_break_interval" INTEGER NOT NULL DEFAULT 4,
+    "auto_start_pomodoros" BOOLEAN NOT NULL,
+    "auto_start_breaks" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "user_id" TEXT NOT NULL,
 
-    CONSTRAINT "Example_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Timer_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -54,6 +64,9 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Timer_user_id_key" ON "Timer"("user_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
 
 -- CreateIndex
@@ -67,6 +80,9 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+
+-- AddForeignKey
+ALTER TABLE "Timer" ADD CONSTRAINT "Timer_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
