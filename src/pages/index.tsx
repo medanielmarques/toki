@@ -11,7 +11,7 @@ import Head from 'next/head'
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions)
 
-  const timerSettings = await prisma.timer.findFirst({
+  const userSettings = await prisma.timer.findFirst({
     where: {
       user_id: session?.user.id,
     },
@@ -29,18 +29,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   })
 
   return {
-    props: { timerSettings },
+    props: { userSettings },
   }
 }
 
-// 1000 * 60 * 25 -> 1_500_000 miliseconds -> 25 minutes
-// 1000 * 60 * 5 -> 300_000 miliseconds -> 5 minutes
-// 1000 * 60 * 15 -> 900_000 miliseconds -> 15 minutes
-
 const defaultSettings = {
-  pomodoro_time: 1_500_000,
-  short_break_time: 300_000,
-  long_break_time: 900_000,
+  pomodoro_time: 1000 * 60 * 25, // 25 minutes
+  short_break_time: 1000 * 60 * 5, // 5 minutes
+  long_break_time: 1000 * 60 * 15, // 15 minutes
   pomodoro_count: 0,
   short_break_count: 0,
   long_break_count: 0,
@@ -49,10 +45,10 @@ const defaultSettings = {
   long_break_interval: 4,
 }
 
-export default function Pomodoro({ timerSettings }: { timerSettings: Timer }) {
+export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   const session = useSession()
   const [timer, setTimer] = useState(
-    timerSettings?.pomodoro_time || defaultSettings.pomodoro_time,
+    userSettings?.pomodoro_time || defaultSettings.pomodoro_time,
   )
 
   // setInterval(() => {
@@ -72,6 +68,7 @@ export default function Pomodoro({ timerSettings }: { timerSettings: Timer }) {
       <Head>
         <title>Toki - {formatTimer()} - Pomodoro</title>
       </Head>
+
       <div className='mt-40 flex justify-center'>
         {session.status === 'unauthenticated' ? (
           <button onClick={() => signIn('google', { callbackUrl: '/' })}>
@@ -94,7 +91,7 @@ export default function Pomodoro({ timerSettings }: { timerSettings: Timer }) {
             </button>
           </div>
           <p className='mt-6 text-xl text-gray-400'>
-            #{timerSettings?.pomodoro_count || defaultSettings.pomodoro_count}
+            #{userSettings?.pomodoro_count || defaultSettings.pomodoro_count}
           </p>
         </div>
       </div>

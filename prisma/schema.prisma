@@ -13,12 +13,9 @@ model Timer {
     short_break_count Int    @default(0)
     long_break_count  Int    @default(0)
 
-    // 1000 * 60 * 25 -> 1_500_000 miliseconds -> 25 minutes
-    // 1000 * 60 * 5 -> 300_000 miliseconds -> 5 minutes
-    // 1000 * 60 * 15 -> 900_000 miliseconds -> 15 minutes
-    pomodoro_time    Int @default(1500000)
-    short_break_time Int @default(300000)
-    long_break_time  Int @default(900000)
+    pomodoro_time    Int @default(1500000) // 25 minutes
+    short_break_time Int @default(300000) // 5 minutes
+    long_break_time  Int @default(900000) // 15 minutes
 
     long_break_interval  Int     @default(4)
     auto_start_pomodoros Boolean
