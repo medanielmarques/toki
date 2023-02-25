@@ -33,9 +33,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
+// 1000 * 60 * 25 -> 1_500_000 miliseconds -> 25 minutes
+// 1000 * 60 * 5 -> 300_000 miliseconds -> 5 minutes
+// 1000 * 60 * 15 -> 900_000 miliseconds -> 15 minutes
+
+const defaultSettings = {
+  pomodoro_time: 1_500_000,
+  short_break_time: 300_000,
+  long_break_time: 900_000,
+  pomodoro_count: 0,
+  short_break_count: 0,
+  long_break_count: 0,
+  auto_start_pomodoros: true,
+  auto_start_breaks: true,
+  long_break_interval: 4,
+}
+
 export default function Pomodoro({ timerSettings }: { timerSettings: Timer }) {
   const session = useSession()
-  const [timer, setTimer] = useState(timerSettings.pomodoro_time)
+  const [timer, setTimer] = useState(
+    timerSettings?.pomodoro_time || defaultSettings.pomodoro_time,
+  )
 
   // setInterval(() => {
   //   // setTimer((timer) => (timer = timer + 1000))
@@ -76,7 +94,7 @@ export default function Pomodoro({ timerSettings }: { timerSettings: Timer }) {
             </button>
           </div>
           <p className='mt-6 text-xl text-gray-400'>
-            #{timerSettings.pomodoro_count}
+            #{timerSettings?.pomodoro_count || defaultSettings.pomodoro_count}
           </p>
         </div>
       </div>
