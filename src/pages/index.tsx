@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { type GetServerSideProps } from 'next'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { authOptions } from '@/server/auth'
 import { prisma } from '@/server/db'
 import { type Timer } from '@prisma/client'
 import Head from 'next/head'
+
+import useSound from 'use-sound'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions)
@@ -45,6 +47,8 @@ const defaultSettings = {
   long_break_interval: 4,
 }
 
+const bubbleSfx = '../../audio/bubble.mp3'
+
 const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
 const formatTime = (time: number) => {
   const seconds = Math.floor(time / 1000) % 60
@@ -57,14 +61,25 @@ const countDown = (time: number) => (time > 0 ? time - 1000 : time)
 
 export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   const session = useSession()
-  const [timer, setTimer] = useState(10000)
+  const [timer, setTimer] = useState(4000)
+  const [isTimerActive, setIsTimerActive] = useState(false)
+
+  const [playAudio] = useSound('../../audio/bubble.mp3')
+
+  const handleTimerState = () => setIsTimerActive((timer) => !timer)
 
   useEffect(() => {
-    const countdownInterval = setInterval(() => setTimer(countDown), 1000)
+    if (isTimerActive) {
+      const countdownInterval = setInterval(() => setTimer(countDown), 1000)
 
-    if (timer === 0) clearInterval(countdownInterval)
-    return () => clearInterval(countdownInterval)
-  }, [timer])
+      if (timer === 0) {
+        clearInterval(countdownInterval)
+        setIsTimerActive(false)
+        playAudio()
+      }
+      return () => clearInterval(countdownInterval)
+    }
+  }, [timer, isTimerActive])
 
   return (
     <>
@@ -89,8 +104,11 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
 
             <h1 className='text-9xl font-bold'>{formatTime(timer)}</h1>
 
-            <button className='w-3/6 rounded-lg bg-white px-8 py-4 text-2xl font-bold text-sky-900 hover:bg-gray-200'>
-              START
+            <button
+              className='w-3/6 rounded-lg bg-white px-8 py-4 text-2xl font-bold text-sky-900 hover:bg-gray-200'
+              onClick={handleTimerState}
+            >
+              {isTimerActive ? 'PAUSE' : 'START'}
             </button>
           </div>
           <p className='mt-6 text-xl text-gray-400'>
