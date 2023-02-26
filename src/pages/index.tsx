@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { type GetServerSideProps } from 'next'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { authOptions } from '@/server/auth'
@@ -45,28 +45,31 @@ const defaultSettings = {
   long_break_interval: 4,
 }
 
+const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
+const formatTime = (time: number) => {
+  const seconds = Math.floor(time / 1000) % 60
+  const minutes = Math.floor(time / 1000 / 60)
+
+  return `${addZeroBefore(minutes)}:${addZeroBefore(seconds)}`
+}
+
+const countDown = (time: number) => (time > 0 ? time - 1000 : time)
+
 export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   const session = useSession()
-  const [timer, setTimer] = useState(
-    userSettings?.pomodoro_time || defaultSettings.pomodoro_time,
-  )
+  const [timer, setTimer] = useState(10000)
 
-  // setInterval(() => {
-  //   // setTimer((timer) => (timer = timer + 1000))
-  // }, 1000)
+  useEffect(() => {
+    const countdownInterval = setInterval(() => setTimer(countDown), 1000)
 
-  const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
-  const formatTimer = () => {
-    const seconds = Math.floor(timer / 1000) % 60
-    const minutes = Math.floor(timer / 1000 / 60)
-
-    return `${addZeroBefore(minutes)}:${addZeroBefore(seconds)}`
-  }
+    if (timer === 0) clearInterval(countdownInterval)
+    return () => clearInterval(countdownInterval)
+  }, [timer])
 
   return (
     <>
       <Head>
-        <title>Toki - {formatTimer()} - Pomodoro</title>
+        <title>Toki - {formatTime(timer)} - Pomodoro</title>
       </Head>
 
       <div className='mt-40 flex justify-center'>
@@ -84,7 +87,7 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
               <ActivityButton label='Long Break' />
             </div>
 
-            <h1 className='text-9xl font-bold'>{formatTimer()}</h1>
+            <h1 className='text-9xl font-bold'>{formatTime(timer)}</h1>
 
             <button className='w-3/6 rounded-lg bg-white px-8 py-4 text-2xl font-bold text-sky-900 hover:bg-gray-200'>
               START
