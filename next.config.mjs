@@ -1,3 +1,5 @@
+import withBundleAnalyzer from '@next/bundle-analyzer'
+
 // @ts-check
 
 /**
@@ -21,4 +23,6 @@ const config = {
     defaultLocale: 'en',
   },
 }
-export default config
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})(config)

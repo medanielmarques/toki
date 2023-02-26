@@ -2,7 +2,7 @@
 import { type GetServerSideProps } from 'next'
 import { useEffect, useState } from 'react'
 import { getServerSession } from 'next-auth'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { authOptions } from '@/server/auth'
 import { prisma } from '@/server/db'
 import { type Timer } from '@prisma/client'
@@ -60,7 +60,6 @@ const formatTime = (time: number) => {
 const countDown = (time: number) => (time > 0 ? time - 1000 : time)
 
 export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
-  const session = useSession()
   const [timer, setTimer] = useState(3000)
   const [isTimerActive, setIsTimerActive] = useState(false)
 
@@ -89,13 +88,9 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
         <title>Toki - {formatTime(timer)} - Pomodoro</title>
       </Head>
 
-      <div className='mt-40 flex justify-center'>
-        {session.status === 'unauthenticated' ? (
-          <button onClick={() => signIn('google', { callbackUrl: '/' })}>
-            Sign in
-          </button>
-        ) : null}
+      <Header />
 
+      <div className='mt-40 flex justify-center'>
         <div className='text-center'>
           <div className='flex flex-col content-center items-center justify-between gap-12 rounded-2xl bg-[#312e45] py-8 px-16'>
             <div className='flex items-center gap-4'>
@@ -121,6 +116,37 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
     </>
   )
 }
+
+const Header = () => {
+  const session = useSession()
+
+  return (
+    <>
+      {/* <Head>
+        <title>Toki - {formatTime(timer)} - Pomodoro</title>
+      </Head> */}
+      <div className='mx-auto flex h-16 w-1/4 items-center justify-center bg-slate-900 px-8'>
+        {session.status === 'unauthenticated' ? (
+          <HeaderButton
+            onClick={() => signIn('google', { callbackUrl: '/' })}
+            label='Sign in'
+          />
+        ) : (
+          <HeaderButton onClick={() => signOut()} label='Sign out' />
+        )}
+      </div>
+    </>
+  )
+}
+
+const HeaderButton = (props: { onClick: () => void; label: string }) => (
+  <button
+    className='h-11 w-28 rounded-full bg-slate-700 hover:bg-slate-600'
+    onClick={props.onClick}
+  >
+    {props.label}
+  </button>
+)
 
 const ActivityButton = (props: { label: string; current?: boolean }) => (
   <button
