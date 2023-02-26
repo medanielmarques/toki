@@ -61,10 +61,12 @@ const countDown = (time: number) => (time > 0 ? time - 1000 : time)
 
 export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   const session = useSession()
-  const [timer, setTimer] = useState(4000)
+  const [timer, setTimer] = useState(3000)
   const [isTimerActive, setIsTimerActive] = useState(false)
 
-  const [playAudio] = useSound('../../audio/bubble.mp3')
+  const [playAudio] = useSound(bubbleSfx, {
+    volume: 0.05,
+  })
 
   const handleTimerState = () => setIsTimerActive((timer) => !timer)
 
@@ -79,7 +81,7 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
       }
       return () => clearInterval(countdownInterval)
     }
-  }, [timer, isTimerActive])
+  }, [timer, isTimerActive, playAudio])
 
   return (
     <>
