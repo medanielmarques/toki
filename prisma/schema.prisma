@@ -17,9 +17,10 @@ model Timer {
     short_break_time Int @default(300000) // 5 minutes
     long_break_time  Int @default(900000) // 15 minutes
 
-    long_break_interval  Int     @default(4)
-    auto_start_pomodoros Boolean
-    auto_start_breaks    Boolean
+    long_break_interval               Int     @default(4)
+    current_long_break_interval_count Int     @default(0)
+    auto_start_pomodoros              Boolean
+    auto_start_breaks                 Boolean
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

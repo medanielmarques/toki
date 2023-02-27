@@ -63,7 +63,7 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   const [timer, setTimer] = useState(3000)
   const [isTimerActive, setIsTimerActive] = useState(false)
 
-  const [playAudio] = useSound(bubbleSfx, {
+  const [playAlarm] = useSound(bubbleSfx, {
     volume: 0.05,
   })
 
@@ -76,19 +76,17 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
       if (timer === 0) {
         clearInterval(countdownInterval)
         setIsTimerActive(false)
-        playAudio()
+        playAlarm()
       }
       return () => clearInterval(countdownInterval)
     }
-  }, [timer, isTimerActive, playAudio])
+  }, [timer, isTimerActive, playAlarm])
 
   return (
     <>
       <Head>
         <title>Toki - {formatTime(timer)} - Pomodoro</title>
       </Head>
-
-      <Header />
 
       <div className='mt-40 flex justify-center'>
         <div className='text-center'>
