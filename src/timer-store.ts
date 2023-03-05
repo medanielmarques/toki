@@ -51,6 +51,15 @@ type TimerStore = {
 
 const countdown = (time: number) => (time > 0 ? time - 1000 : time)
 
+const switchActivity = (activity?: Activity): Activity => {
+  if (activity) {
+    return activity
+  }
+
+  return 'longBreak'
+  // return chooseNextActivity()
+}
+
 const useTimerStore = create<TimerStore>((set) => ({
   timer: 1000 * 60 * 25, // 25 minutes
   currentActivity: 'pomodoro',
@@ -80,7 +89,12 @@ const useTimerStore = create<TimerStore>((set) => ({
 
     playAlarm: () => ({}),
 
-    switchActivity: () => ({}),
+    switchActivity: (activity?: Activity) =>
+      set(
+        produce<TimerStore>((state) => {
+          state.currentActivity = switchActivity(activity)
+        }),
+      ),
   },
 }))
 

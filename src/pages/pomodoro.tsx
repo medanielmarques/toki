@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { type GetServerSideProps } from 'next'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { getServerSession } from 'next-auth'
-import { signIn, signOut, useSession } from 'next-auth/react'
 import { authOptions } from '@/server/auth'
 import { prisma } from '@/server/db'
 import { type Timer } from '@prisma/client'
-import Head from 'next/head'
 
 import useSound from 'use-sound'
 import {
@@ -16,6 +14,7 @@ import {
   useTimerActions,
   useTimer,
 } from '@/timer-store'
+import { Header } from '@/header'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions)
@@ -34,6 +33,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       auto_start_pomodoros: true,
       auto_start_breaks: true,
       long_break_interval: true,
+      current_long_break_interval_count: true,
     },
   })
 
@@ -56,15 +56,15 @@ const defaultSettings = {
 
 const bubbleSfx = '../../audio/bubble.mp3'
 
-const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
-const formatTime = (time: number) => {
-  const seconds = Math.floor(time / 1000) % 60
-  const minutes = Math.floor(time / 1000 / 60)
+export const timerUtils = {
+  formatTime: (time: number) => {
+    const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
+    const seconds = Math.floor(time / 1000) % 60
+    const minutes = Math.floor(time / 1000 / 60)
 
-  return `${addZeroBefore(minutes)}:${addZeroBefore(seconds)}`
+    return `${addZeroBefore(minutes)}:${addZeroBefore(seconds)}`
+  },
 }
-
-const countDown = (time: number) => (time > 0 ? time - 1000 : time)
 
 export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   const timer = useTimer()
@@ -75,8 +75,6 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
     volume: 0.05,
   })
 
-  const handleTimerState = () => timerActions.toggleTimer()
-
   useEffect(() => {
     if (isTimerActive) {
       const countdownInterval = setInterval(timerActions.countdown, 1000)
@@ -86,15 +84,16 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
         timerActions.toggleTimer()
         playAlarm()
       }
-      return () => clearInterval(countdownInterval)
+      return () => {
+        clearInterval(countdownInterval)
+        // timerActions.switchActivity()
+      }
     }
   }, [timer, isTimerActive, playAlarm, timerActions])
 
   return (
     <>
-      <Head>
-        <title>Toki - {formatTime(timer)} - Pomodoro</title>
-      </Head>
+      <Header />
 
       <div className='mt-40 flex justify-center'>
         <div className='text-center'>
@@ -105,11 +104,13 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
               <ActivityButton activity='longBreak' label='Long Break' />
             </div>
 
-            <h1 className='text-9xl font-bold'>{formatTime(timer)}</h1>
+            <h1 className='text-9xl font-bold'>
+              {timerUtils.formatTime(timer)}
+            </h1>
 
             <button
               className='w-3/6 rounded-lg bg-white px-8 py-4 text-2xl font-bold text-sky-900 hover:bg-gray-200'
-              onClick={handleTimerState}
+              onClick={timerActions.toggleTimer}
             >
               {isTimerActive ? 'PAUSE' : 'START'}
             </button>
@@ -123,45 +124,16 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
   )
 }
 
-const Header = () => {
-  const session = useSession()
-
-  return (
-    <>
-      {/* <Head>
-        <title>Toki - {formatTime(timer)} - Pomodoro</title>
-      </Head> */}
-      <div className='mx-auto flex h-16 w-1/4 items-center justify-center bg-slate-900 px-8'>
-        {session.status === 'unauthenticated' ? (
-          <HeaderButton
-            onClick={() => signIn('google', { callbackUrl: '/' })}
-            label='Sign in'
-          />
-        ) : (
-          <HeaderButton onClick={() => signOut()} label='Sign out' />
-        )}
-      </div>
-    </>
-  )
-}
-
-const HeaderButton = (props: { onClick: () => void; label: string }) => (
-  <button
-    className='h-11 w-28 rounded-full bg-slate-700 hover:bg-slate-600'
-    onClick={props.onClick}
-  >
-    {props.label}
-  </button>
-)
-
 const ActivityButton = (props: { label: string; activity: Activity }) => {
   const currentActivity = useCurrentActivity()
+  const timerActions = useTimerActions()
 
   return (
     <button
       className={`rounded-2xl py-3 px-6 ${
         props.activity === currentActivity ? 'bg-sky-900 ' : 'hover:bg-gray-700'
       }`}
+      onClick={() => timerActions.switchActivity(props.activity)}
     >
       {props.label}
     </button>
