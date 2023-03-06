@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { type GetServerSideProps } from 'next'
-import { useEffect } from 'react'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/server/auth'
-import { prisma } from '@/server/db'
-import { type Timer } from '@prisma/client'
+import { useEffect, useMemo } from 'react'
 
 import useSound from 'use-sound'
 import {
@@ -15,44 +10,8 @@ import {
   useTimer,
 } from '@/timer-store'
 import { Header } from '@/header'
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions)
-
-  const userSettings = await prisma.timer.findFirst({
-    where: {
-      user_id: session?.user.id,
-    },
-    select: {
-      pomodoro_time: true,
-      short_break_time: true,
-      long_break_time: true,
-      pomodoro_count: true,
-      short_break_count: true,
-      long_break_count: true,
-      auto_start_pomodoros: true,
-      auto_start_breaks: true,
-      long_break_interval: true,
-      current_long_break_interval_count: true,
-    },
-  })
-
-  return {
-    props: { userSettings },
-  }
-}
-
-const defaultSettings = {
-  pomodoro_time: 1000 * 60 * 25, // 25 minutes
-  short_break_time: 1000 * 60 * 5, // 5 minutes
-  long_break_time: 1000 * 60 * 15, // 15 minutes
-  pomodoro_count: 0,
-  short_break_count: 0,
-  long_break_count: 0,
-  auto_start_pomodoros: true,
-  auto_start_breaks: true,
-  long_break_interval: 4,
-}
+import { activityCount, useSettingsActions } from '@/settings-store'
+import { api } from '@/utils/api'
 
 const bubbleSfx = '../../audio/bubble.mp3'
 
@@ -66,10 +25,20 @@ export const timerUtils = {
   },
 }
 
-export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
+export default function Pomodoro() {
   const timer = useTimer()
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
+  const settingsActions = useSettingsActions()
+
+  const userSettings = api.userSettings.get.useQuery()
+
+  useMemo(() => {
+    if (userSettings.data) {
+      settingsActions.setSettings(userSettings.data)
+      timerActions.setTimer(userSettings.data.pomodoroTime)
+    }
+  }, [settingsActions, timerActions, userSettings.data])
 
   const [playAlarm] = useSound(bubbleSfx, {
     volume: 0.05,
@@ -115,9 +84,7 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
               {isTimerActive ? 'PAUSE' : 'START'}
             </button>
           </div>
-          <p className='mt-6 text-xl text-gray-400'>
-            #{userSettings?.pomodoro_count || defaultSettings.pomodoro_count}
-          </p>
+          <p className='mt-6 text-xl text-gray-400'>#{activityCount()}</p>
         </div>
       </div>
     </>

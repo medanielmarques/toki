@@ -107,7 +107,7 @@ export default function Pomodoro({ userSettings }: { userSettings: Timer }) {
             </button>
           </div>
           <p className='mt-6 text-xl text-gray-400'>
-            #{userSettings?.pomodoro_count || defaultSettings.pomodoro_count}
+            #{userSettings?.pomodoroCount || defaultSettings.pomodoro_count}
           </p>
         </div>
       </div>

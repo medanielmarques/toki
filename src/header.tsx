@@ -10,9 +10,9 @@ export const Header = () => {
   return (
     <>
       <Head>
-        <title>Toki - {timerUtils.formatTime(timer)} - Pomodoro</title>
+        <title>{`Toki - ${timerUtils.formatTime(timer)} - Pomodoro`}</title>
       </Head>
-      {/* <div className='mx-auto flex h-16 w-1/4 items-center justify-center bg-slate-900 px-8'>
+      <div className='mx-auto flex h-16 w-1/4 items-center justify-center bg-slate-900 px-8'>
         {session.status === 'unauthenticated' ? (
           <HeaderButton
             onClick={() => signIn('google', { callbackUrl: '/' })}
@@ -21,7 +21,7 @@ export const Header = () => {
         ) : (
           <HeaderButton onClick={() => signOut()} label='Sign out' />
         )}
-      </div> */}
+      </div>
     </>
   )
 }

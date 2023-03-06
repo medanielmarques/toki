@@ -8,25 +8,25 @@ datasource db {
 }
 
 model Timer {
-    id                String @id @default(cuid())
-    pomodoro_count    Int    @default(0)
-    short_break_count Int    @default(0)
-    long_break_count  Int    @default(0)
+    id              String @id @default(cuid())
+    pomodoroCount   Int    @default(0)
+    shortBreakCount Int    @default(0)
+    longBreakCount  Int    @default(0)
 
-    pomodoro_time    Int @default(1500000) // 25 minutes
-    short_break_time Int @default(300000) // 5 minutes
-    long_break_time  Int @default(900000) // 15 minutes
+    pomodoroTime   Int @default(1500000) // 25 minutes
+    shortBreakTime Int @default(300000) // 5 minutes
+    longBreakTime  Int @default(900000) // 15 minutes
 
-    long_break_interval               Int     @default(4)
-    current_long_break_interval_count Int     @default(0)
-    auto_start_pomodoros              Boolean
-    auto_start_breaks                 Boolean
+    longBreakInterval             Int     @default(4)
+    currentLongBreakIntervalCount Int     @default(0)
+    autoStartPomodoros            Boolean
+    autoStartBreaks               Boolean
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    user_id String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique
 }
 
 model Account {

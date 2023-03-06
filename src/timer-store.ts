@@ -1,37 +1,6 @@
 import { create } from 'zustand'
 import produce from 'immer'
-
-const defaultSettings = {
-  pomodoroTime: 1000 * 60 * 25, // 25 minutes
-  shortBreakTime: 1000 * 60 * 5, // 5 minutes
-  longBreakTime: 1000 * 60 * 15, // 15 minutes
-  pomodoroCount: 0,
-  shortBreakCount: 0,
-  longBreakCount: 0,
-  autoStartPomodoros: true,
-  autoStartBreaks: true,
-  longBreakInterval: 4,
-}
-
-type UserSettings = {
-  pomodoroTime: number
-  shortBreakTime: number
-  longBreakTime: number
-  pomodoroCount: number
-  shortBreakCount: number
-  longBreakCount: number
-  autoStartPomodoros: boolean
-  autoStartBreaks: boolean
-  longBreakInterval: number
-}
-
-type UserSettingsStore = {
-  userSettings: UserSettings
-}
-
-const useUserSettingsStore = create<UserSettingsStore>((set) => ({
-  userSettings: defaultSettings,
-}))
+import { useSettingsStore } from '@/settings-store'
 
 export type Activity = 'pomodoro' | 'shortBreak' | 'longBreak'
 
@@ -45,22 +14,28 @@ type TimerStore = {
     toggleTimer: () => void
     countdown: () => void
     playAlarm: () => void
-    switchActivity: (activity?: Activity) => void
+    switchActivity: (activity: Activity) => void
   }
 }
 
 const countdown = (time: number) => (time > 0 ? time - 1000 : time)
 
-const switchActivity = (activity?: Activity): Activity => {
-  if (activity) {
-    return activity
-  }
+// chooseNextActivity()
 
-  return 'longBreak'
-  // return chooseNextActivity()
+const chooseNextTimer = (activity: Activity) => {
+  const settings = useSettingsStore.getState().userSettings
+
+  switch (activity) {
+    case 'pomodoro':
+      return settings.pomodoroTime
+    case 'shortBreak':
+      return settings.shortBreakTime
+    case 'longBreak':
+      return settings.longBreakTime
+  }
 }
 
-const useTimerStore = create<TimerStore>((set) => ({
+export const useTimerStore = create<TimerStore>((set) => ({
   timer: 1000 * 60 * 25, // 25 minutes
   currentActivity: 'pomodoro',
   isTimerActive: false,
@@ -89,10 +64,12 @@ const useTimerStore = create<TimerStore>((set) => ({
 
     playAlarm: () => ({}),
 
-    switchActivity: (activity?: Activity) =>
+    switchActivity: (activity: Activity) =>
       set(
         produce<TimerStore>((state) => {
-          state.currentActivity = switchActivity(activity)
+          state.currentActivity = activity
+          state.timer = chooseNextTimer(activity)
+          state.isTimerActive = false
         }),
       ),
   },
