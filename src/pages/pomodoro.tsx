@@ -14,6 +14,7 @@ import { activityCount, useSettingsActions } from '@/settings-store'
 import { api } from '@/utils/api'
 
 const bubbleSfx = '../../audio/bubble.mp3'
+const toggleTimerSfx = '../../audio/toggle-timer.mp3'
 
 export const timerUtils = {
   formatTime: (time: number) => {
@@ -40,8 +41,11 @@ export default function Pomodoro() {
     }
   }, [settingsActions, timerActions, userSettings.data])
 
-  const [playAlarm] = useSound(bubbleSfx, {
+  const [playAlarmSound] = useSound(bubbleSfx, {
     volume: 0.05,
+  })
+  const [playToggleTimerSound] = useSound(toggleTimerSfx, {
+    volume: 0.01,
   })
 
   useEffect(() => {
@@ -51,22 +55,22 @@ export default function Pomodoro() {
       if (timer === 0) {
         clearInterval(countdownInterval)
         timerActions.toggleTimer()
-        playAlarm()
+        playAlarmSound()
       }
       return () => {
         clearInterval(countdownInterval)
         // timerActions.switchActivity()
       }
     }
-  }, [timer, isTimerActive, playAlarm, timerActions])
+  }, [timer, isTimerActive, playAlarmSound, timerActions])
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <div className='mt-40 flex justify-center'>
         <div className='text-center'>
-          <div className='flex flex-col content-center items-center justify-between gap-12 rounded-2xl bg-[#312e45] py-8 px-16'>
+          <div className='flex flex-col content-center items-center justify-between gap-16 rounded-2xl bg-[#183752] py-10 px-20'>
             <div className='flex items-center gap-4'>
               <ActivityButton activity='pomodoro' label='Pomodoro' />
               <ActivityButton activity='shortBreak' label='Short Break' />
@@ -78,10 +82,13 @@ export default function Pomodoro() {
             </h1>
 
             <button
-              className='w-3/6 rounded-lg bg-white px-8 py-4 text-2xl font-bold text-sky-900 hover:bg-gray-200'
-              onClick={timerActions.toggleTimer}
+              className='w-9/12 rounded-lg border-2 border-[#E5DCB4] px-8 py-6 text-3xl font-bold text-[#E5DCB4] hover:bg-[#E5DCB4] hover:text-[#183752]'
+              onClick={() => {
+                timerActions.toggleTimer()
+                playToggleTimerSound()
+              }}
             >
-              {isTimerActive ? 'PAUSE' : 'START'}
+              {isTimerActive ? 'Pause' : 'Start'}
             </button>
           </div>
           <p className='mt-6 text-xl text-gray-400'>#{activityCount()}</p>
@@ -97,8 +104,10 @@ const ActivityButton = (props: { label: string; activity: Activity }) => {
 
   return (
     <button
-      className={`rounded-2xl py-3 px-6 ${
-        props.activity === currentActivity ? 'bg-sky-900 ' : 'hover:bg-gray-700'
+      className={`rounded-2xl py-3 px-6 text-lg font-bold ${
+        props.activity === currentActivity
+          ? 'bg-[#E5DCB4] text-[#183752]'
+          : 'hover:bg-gray-800'
       }`}
       onClick={() => timerActions.switchActivity(props.activity)}
     >
