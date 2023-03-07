@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { prisma } from '@/server/db'
+import { z } from 'zod'
 
 export const settingsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -23,4 +24,23 @@ export const settingsRouter = createTRPCRouter({
 
     return userSettings
   }),
+
+  updateActivityCount: protectedProcedure
+    .input(
+      z.object({
+        field: z.enum(['pomodoroCount', 'shortBreakCount', 'longBreakCount']),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.timer.update({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          [input.field]: {
+            increment: 1,
+          },
+        },
+      })
+    }),
 })

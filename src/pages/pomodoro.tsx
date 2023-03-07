@@ -33,6 +33,7 @@ export default function Pomodoro() {
   const settingsActions = useSettingsActions()
 
   const userSettings = api.userSettings.get.useQuery()
+  const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
 
   useMemo(() => {
     if (userSettings.data) {
@@ -57,12 +58,13 @@ export default function Pomodoro() {
         timerActions.toggleTimer()
         timerActions.decideNextActivity()
         playAlarmSound()
+        updateActivityCount.mutate({ field: 'pomodoroCount' })
       }
       return () => {
         clearInterval(countdownInterval)
       }
     }
-  }, [timer, isTimerActive, playAlarmSound, timerActions])
+  }, [timer, isTimerActive, playAlarmSound, timerActions, updateActivityCount])
 
   return (
     <>
