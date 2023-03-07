@@ -12,6 +12,7 @@ export const defaultSettings = {
   autoStartPomodoros: true,
   autoStartBreaks: true,
   longBreakInterval: 4,
+  currentLongBreakIntervalCount: 0,
 }
 
 type Settings = {
@@ -24,6 +25,7 @@ type Settings = {
   autoStartPomodoros: boolean
   autoStartBreaks: boolean
   longBreakInterval: number
+  currentLongBreakIntervalCount: number
 }
 
 type SettingsStore = {

@@ -8,19 +8,31 @@ type TimerStore = {
   timer: number
   currentActivity: Activity
   isTimerActive: boolean
-
   actions: {
     setTimer: (newTime: number) => void
     toggleTimer: () => void
     countdown: () => void
-    playAlarm: () => void
     switchActivity: (activity: Activity) => void
+    decideNextActivity: () => void
   }
 }
 
 const countdown = (time: number) => (time > 0 ? time - 1000 : time)
 
-// chooseNextActivity()
+const decideNextActivity = (currentActivity: Activity): Activity => {
+  const { currentLongBreakIntervalCount, longBreakInterval } =
+    useSettingsStore.getState().userSettings
+
+  const shouldNextActivityBeLongBreak =
+    currentLongBreakIntervalCount === longBreakInterval - 1
+
+  switch (currentActivity) {
+    case 'pomodoro':
+      return shouldNextActivityBeLongBreak ? 'longBreak' : 'shortBreak'
+    default:
+      return 'pomodoro'
+  }
+}
 
 const chooseNextTimer = (activity: Activity) => {
   const settings = useSettingsStore.getState().userSettings
@@ -35,7 +47,7 @@ const chooseNextTimer = (activity: Activity) => {
   }
 }
 
-export const useTimerStore = create<TimerStore>((set) => ({
+export const useTimerStore = create<TimerStore>((set, get) => ({
   timer: 1000 * 60 * 25, // 25 minutes
   currentActivity: 'pomodoro',
   isTimerActive: false,
@@ -62,8 +74,6 @@ export const useTimerStore = create<TimerStore>((set) => ({
         }),
       ),
 
-    playAlarm: () => ({}),
-
     switchActivity: (activity: Activity) =>
       set(
         produce<TimerStore>((state) => {
@@ -72,6 +82,18 @@ export const useTimerStore = create<TimerStore>((set) => ({
           state.isTimerActive = false
         }),
       ),
+
+    decideNextActivity: () => {
+      const nextActivity = decideNextActivity(get().currentActivity)
+
+      set(
+        produce<TimerStore>((state) => {
+          state.currentActivity = nextActivity
+          state.timer = chooseNextTimer(nextActivity)
+          state.isTimerActive = false
+        }),
+      )
+    },
   },
 }))
 

@@ -55,11 +55,11 @@ export default function Pomodoro() {
       if (timer === 0) {
         clearInterval(countdownInterval)
         timerActions.toggleTimer()
+        timerActions.decideNextActivity()
         playAlarmSound()
       }
       return () => {
         clearInterval(countdownInterval)
-        // timerActions.switchActivity()
       }
     }
   }, [timer, isTimerActive, playAlarmSound, timerActions])
