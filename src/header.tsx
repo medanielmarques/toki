@@ -1,4 +1,4 @@
-import { timerUtils } from '@/pages/pomodoro'
+import { timerUtils } from '@/pages'
 import { useTimer } from '@/timer-store'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
@@ -12,7 +12,7 @@ export const Header = () => {
       <Head>
         <title>{`Toki - ${timerUtils.formatTime(timer)} - Pomodoro`}</title>
       </Head>
-      <div className='mx-auto flex h-16 w-1/4 items-center justify-center bg-slate-900 px-8'>
+      <div className='mx-auto flex h-16 w-1/4 items-center justify-center px-8'>
         {session.status === 'unauthenticated' ? (
           <HeaderButton
             onClick={() => signIn('google', { callbackUrl: '/' })}
