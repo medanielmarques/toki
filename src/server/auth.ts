@@ -34,6 +34,9 @@ declare module 'next-auth' {
 
 const TokiAdapter = (): Adapter => ({
   ...PrismaAdapter(prisma),
+
+  // eslint-disable-next-line
+  // @ts-ignore
   createUser: (data: Prisma.UserCreateInput) => {
     return prisma.user.create({ data }).then(async (user) => {
       await prisma.timer.create({
