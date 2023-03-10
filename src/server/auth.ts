@@ -8,6 +8,8 @@ import GoogleProvider from 'next-auth/providers/google'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
+import { type Prisma } from '@prisma/client'
+import { type Adapter } from 'next-auth/adapters'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -30,6 +32,21 @@ declare module 'next-auth' {
   // }
 }
 
+const TokiAdapter = (): Adapter => ({
+  ...PrismaAdapter(prisma),
+  createUser: (data: Prisma.UserCreateInput) => {
+    return prisma.user.create({ data }).then(async (user) => {
+      await prisma.timer.create({
+        data: {
+          userId: user.id,
+        },
+      })
+
+      return user
+    })
+  },
+})
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -45,7 +62,7 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
-  adapter: PrismaAdapter(prisma),
+  adapter: TokiAdapter(),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

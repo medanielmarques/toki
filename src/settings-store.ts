@@ -3,7 +3,7 @@ import produce from 'immer'
 import { useTimerStore } from '@/timer-store'
 
 export const defaultSettings = {
-  pomodoroTime: 1000 * 60 * 25, // 25 minutes
+  pomodoroTime: 1000, // 25 minutes
   shortBreakTime: 1000 * 60 * 5, // 5 minutes
   longBreakTime: 1000 * 60 * 15, // 15 minutes
   pomodoroCount: 0,

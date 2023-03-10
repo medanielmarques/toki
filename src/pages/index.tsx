@@ -32,7 +32,9 @@ export default function Pomodoro() {
   const timerActions = useTimerActions()
   const settingsActions = useSettingsActions()
 
-  const userSettings = api.userSettings.get.useQuery()
+  const userSettings = api.userSettings.get.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  })
   const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
 
   useMemo(() => {

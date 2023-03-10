@@ -19,8 +19,8 @@ model Timer {
 
     longBreakInterval             Int     @default(4)
     currentLongBreakIntervalCount Int     @default(0)
-    autoStartPomodoros            Boolean
-    autoStartBreaks               Boolean
+    autoStartPomodoros            Boolean @default(true)
+    autoStartBreaks               Boolean @default(true)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
