@@ -73,7 +73,14 @@ export default function Pomodoro() {
         clearInterval(countdownInterval)
       }
     }
-  }, [timer, isTimerActive, playAlarmSound, timerActions, updateActivityCount])
+  }, [
+    timer,
+    isTimerActive,
+    playAlarmSound,
+    timerActions,
+    updateActivityCount,
+    userSettings,
+  ])
 
   return (
     <>
