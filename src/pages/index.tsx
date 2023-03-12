@@ -8,9 +8,9 @@ import {
   useIsTimerActive,
   useTimerActions,
   useTimer,
-} from '@/timer-store'
+} from '@/stores/timer-store'
 import { Header } from '@/header'
-import { activityCount, useSettingsActions } from '@/settings-store'
+import { activityCount, useSettingsActions } from '@/stores/settings-store'
 import { api } from '@/utils/api'
 import { useSession } from 'next-auth/react'
 
@@ -97,7 +97,7 @@ export default function Pomodoro() {
 
       <div className='mt-40 flex justify-center'>
         <div className='text-center'>
-          <div className='flex flex-col content-center items-center justify-between gap-16 rounded-2xl bg-[#183752] py-10 px-20'>
+          <div className='flex flex-col content-center items-center justify-between gap-16 rounded-2xl bg-[#c75858fd] py-10 px-20'>
             <div className='flex items-center gap-4'>
               <ActivityButton activity='pomodoro' label='Pomodoro' />
               <ActivityButton activity='shortBreak' label='Short Break' />
@@ -109,17 +109,18 @@ export default function Pomodoro() {
             </h1>
 
             <button
-              className='w-9/12 rounded-lg border-2 border-[#E5DCB4] px-8 py-6 text-3xl font-bold text-[#E5DCB4] hover:bg-[#E5DCB4] hover:text-[#183752]'
+              className='w-9/12 rounded-lg border-2 border-[#E5DCB4] px-8 py-6 text-3xl font-bold text-[#E5DCB4]  hover:bg-[#E5DCB4] hover:text-[#183752]'
               onClick={() => {
                 timerActions.toggleTimer()
+
                 playToggleTimerSound()
               }}
             >
-              {isTimerActive ? 'Pause' : 'Start'}
+              {isTimerActive ? 'PAUSE' : 'START'}
             </button>
           </div>
-          <p className='mt-6 text-xl text-gray-400'>
-            You&apos;ve done {activityCount()} {currentActivity} already!
+          <p className='mt-6 text-xl text-gray-200'>
+            You&apos;ve done #{activityCount()} {currentActivity}s!
           </p>
         </div>
       </div>
@@ -135,8 +136,8 @@ const ActivityButton = (props: { label: string; activity: Activity }) => {
     <button
       className={`rounded-2xl py-3 px-6 text-lg font-bold ${
         props.activity === currentActivity
-          ? 'bg-[#E5DCB4] text-[#183752]'
-          : 'hover:bg-gray-800'
+          ? 'bg-[#b04646fd]'
+          : 'hover:bg-[#ae5656fd]'
       }`}
       onClick={() => timerActions.switchActivity(props.activity)}
     >

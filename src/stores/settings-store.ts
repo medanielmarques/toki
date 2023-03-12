@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import produce from 'immer'
-import { useTimerStore } from '@/timer-store'
+import { useTimerStore } from '@/stores/timer-store'
 
 export const defaultSettings = {
   pomodoroTime: 1000 * 60 * 25, // 25 minutes

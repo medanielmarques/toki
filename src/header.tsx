@@ -1,7 +1,8 @@
 import { timerUtils } from '@/pages'
-import { useTimer } from '@/timer-store'
+import { useTimer } from '@/stores/timer-store'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
+import Image from 'next/image'
 
 export const Header = () => {
   const session = useSession()
@@ -12,7 +13,10 @@ export const Header = () => {
       <Head>
         <title>{`Toki - ${timerUtils.formatTime(timer)} - Pomodoro`}</title>
       </Head>
-      <div className='mx-auto flex h-16 w-1/4 items-center justify-center px-8'>
+
+      <div className='mx-auto flex h-16 items-center justify-center gap-4 px-8'>
+        <Image src='/images/toki-logo.svg' width={96} height={96} alt='logo' />
+
         {session.status === 'unauthenticated' ? (
           <HeaderButton
             onClick={() => signIn('google', { callbackUrl: '/' })}
@@ -28,7 +32,7 @@ export const Header = () => {
 
 const HeaderButton = (props: { onClick: () => void; label: string }) => (
   <button
-    className='h-11 w-28 rounded-full bg-slate-700 hover:bg-slate-600'
+    className='h-11 w-28 rounded-2xl font-semibold hover:bg-[#c75858fd]'
     onClick={props.onClick}
   >
     {props.label}

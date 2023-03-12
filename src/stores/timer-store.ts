@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import produce from 'immer'
-import { useSettingsStore } from '@/settings-store'
+import { useSettingsStore } from '@/stores/settings-store'
 
 export type Activity = 'pomodoro' | 'shortBreak' | 'longBreak'
 
@@ -22,10 +22,10 @@ type TimerStore = {
 const countdown = (time: number) => (time > 0 ? time - 1000 : time)
 
 const increaseLongBreakIntervalCount = async () =>
-  await fetch('api/update-long-break-interval-count/increase')
+  await fetch('api/settings/update-long-break-interval-count/increase')
 
 const resetLongBreakIntervalCount = async () =>
-  await fetch('api/update-long-break-interval-count/reset')
+  await fetch('api/settings/update-long-break-interval-count/reset')
 
 const decideNextActivity = (
   currentActivity: Activity,
