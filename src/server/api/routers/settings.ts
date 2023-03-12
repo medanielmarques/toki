@@ -28,7 +28,7 @@ export const settingsRouter = createTRPCRouter({
   updateActivityCount: protectedProcedure
     .input(
       z.object({
-        field: z.enum(['pomodoroCount', 'shortBreakCount', 'longBreakCount']),
+        field: z.enum(['pomodoro', 'shortBreak', 'longBreak']),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -37,7 +37,7 @@ export const settingsRouter = createTRPCRouter({
           userId: ctx.session.user.id,
         },
         data: {
-          [input.field]: {
+          [`${input.field}Count`]: {
             increment: 1,
           },
         },

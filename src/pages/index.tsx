@@ -12,6 +12,7 @@ import {
 import { Header } from '@/header'
 import { activityCount, useSettingsActions } from '@/settings-store'
 import { api } from '@/utils/api'
+import { useSession } from 'next-auth/react'
 
 const bubbleSfx = '../../audio/bubble.mp3'
 const toggleTimerSfx = '../../audio/toggle-timer.mp3'
@@ -30,12 +31,15 @@ export default function Pomodoro() {
   const timer = useTimer()
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
+  const currentActivity = useCurrentActivity()
   const settingsActions = useSettingsActions()
 
   const userSettings = api.userSettings.get.useQuery(undefined, {
     refetchOnWindowFocus: false,
   })
   const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
+
+  const session = useSession()
 
   useMemo(() => {
     if (userSettings.data) {
@@ -58,16 +62,19 @@ export default function Pomodoro() {
       if (timer === 0) {
         clearInterval(countdownInterval)
         timerActions.toggleTimer()
-        timerActions.decideNextActivity()
+        timerActions.decideNextActivity(session.status)
         playAlarmSound()
-        updateActivityCount.mutate(
-          { field: 'pomodoroCount' },
-          {
-            onSuccess: () => {
-              userSettings.refetch()
+
+        if (session.status === 'authenticated') {
+          updateActivityCount.mutate(
+            { field: currentActivity },
+            {
+              onSuccess: () => {
+                userSettings.refetch()
+              },
             },
-          },
-        )
+          )
+        }
       }
       return () => {
         clearInterval(countdownInterval)
@@ -80,6 +87,8 @@ export default function Pomodoro() {
     timerActions,
     updateActivityCount,
     userSettings,
+    currentActivity,
+    session.status,
   ])
 
   return (
@@ -109,7 +118,9 @@ export default function Pomodoro() {
               {isTimerActive ? 'Pause' : 'Start'}
             </button>
           </div>
-          <p className='mt-6 text-xl text-gray-400'>#{activityCount()}</p>
+          <p className='mt-6 text-xl text-gray-400'>
+            You&apos;ve done {activityCount()} {currentActivity} already!
+          </p>
         </div>
       </div>
     </>
