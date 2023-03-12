@@ -109,7 +109,7 @@ export default function Pomodoro() {
             </h1>
 
             <button
-              className='w-9/12 rounded-lg border-2 border-[#E5DCB4] px-8 py-6 text-3xl font-bold text-[#E5DCB4]  hover:bg-[#E5DCB4] hover:text-[#183752]'
+              className='w-9/12 rounded-lg border-2 border-white px-8 py-6 text-3xl font-bold text-white  hover:bg-white hover:text-[#bb3e4a]'
               onClick={() => {
                 timerActions.toggleTimer()
 
