@@ -15,19 +15,24 @@ export const defaultSettings = {
   currentLongBreakIntervalCount: 0,
 }
 
-type Settings = typeof defaultSettings
+export type Settings = typeof defaultSettings
 
 type SettingsStore = {
   userSettings: Settings
   actions: {
     setSettings: (settings: Settings) => void
+    persistNewSettings: () => void
   }
 }
 
-// Maybe use jotai instead.
-// I'd just need to create a function to initially set the state of all the
-// atoms (to make the process simpler), and them use them individually.
-export const useSettingsStore = create<SettingsStore>((set) => ({
+const persistNewSettings = async (settings: Settings) => {
+  await fetch('api/settings/update-all', {
+    method: 'POST',
+    body: JSON.stringify(settings),
+  })
+}
+
+export const useSettingsStore = create<SettingsStore>((set, get) => ({
   userSettings: defaultSettings,
 
   actions: {
@@ -37,6 +42,8 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
           state.userSettings = settings
         }),
       ),
+
+    persistNewSettings: () => persistNewSettings(get().userSettings),
   },
 }))
 
