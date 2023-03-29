@@ -24,7 +24,6 @@ specifiers:
   clsx: ^1.2.1
   eslint: ^8.30.0
   eslint-config-next: 13.1.6
-  immer: ^9.0.19
   jotai: ^2.0.2
   lucide-react: ^0.125.0
   next: 13.1.6
@@ -57,7 +56,6 @@ dependencies:
   '@trpc/server': 10.12.0
   class-variance-authority: 0.4.0_typescript@4.9.5
   clsx: 1.2.1
-  immer: 9.0.19
   jotai: 2.0.2_react@18.2.0
   lucide-react: 0.125.0_react@18.2.0
   next: 13.1.6_biqbaboplfbrettd7655fr4n2y
@@ -69,7 +67,7 @@ dependencies:
   tailwindcss-animate: 1.0.5_tailwindcss@3.2.7
   use-sound: 4.0.1_react@18.2.0
   zod: 3.20.6
-  zustand: 4.3.3_immer@9.0.19+react@18.2.0
+  zustand: 4.3.3_react@18.2.0
 
 devDependencies:
   '@next/bundle-analyzer': 13.2.1
@@ -1893,10 +1891,6 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
-  /immer/9.0.19:
-    resolution: {integrity: sha512-eY+Y0qcsB4TZKwgQzLaE/lqYMlKhv5J9dyd2RhhtGhNo2njPXDqU9XPfcNfa3MIDsdtZt5KlkIsirlo4dHsWdQ==}
-    dev: false
-
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -3329,7 +3323,7 @@ packages:
     resolution: {integrity: sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==}
     dev: false
 
-  /zustand/4.3.3_immer@9.0.19+react@18.2.0:
+  /zustand/4.3.3_react@18.2.0:
     resolution: {integrity: sha512-x2jXq8S0kfLGNwGh87nhRfEc2eZy37tSatpSoSIN+O6HIaBhgQHSONV/F9VNrNcBcKQu/E80K1DeHDYQC/zCrQ==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -3341,7 +3335,6 @@ packages:
       react:
         optional: true
     dependencies:
-      immer: 9.0.19
       react: 18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false

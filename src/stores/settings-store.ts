@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import produce from 'immer'
 import { useTimerStore } from '@/stores/timer-store'
 
 export const defaultSettings = {
@@ -36,12 +35,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   userSettings: defaultSettings,
 
   actions: {
-    setSettings: (settings: Settings) =>
-      set(
-        produce<SettingsStore>((state) => {
-          state.userSettings = settings
-        }),
-      ),
+    setSettings: (settings: Settings) => set({ userSettings: settings }),
 
     persistNewSettings: () => persistNewSettings(get().userSettings),
   },
