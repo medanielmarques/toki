@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,7 +17,7 @@ export const SettingsDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline'>Edit Profile</Button>
+        <Button variant='outline'>Settings</Button>
       </DialogTrigger>
 
       <DialogContent
@@ -31,13 +30,10 @@ export const SettingsDialog = () => {
 
         <div className='grid gap-4 py-4'>
           <div className='grid grid-cols-4 items-center gap-4'>
-            <Settings />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='username' className='text-right'>
-              Username
+              Pomodoro
             </Label>
-            <Input id='username' value='@peduarte' className='col-span-3' />
+            <Settings />
           </div>
         </div>
 
@@ -53,11 +49,23 @@ const Settings = () => {
   const settings = useSettings()
   const settingsActions = useSettingsActions()
 
+  const formatTime = (time: number) => {
+    const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
+    const minutes = Math.floor(time / 1000 / 60)
+
+    return addZeroBefore(minutes)
+  }
+
   return (
     <Input
       type='number'
-      value={settings.pomodoroTime}
-      onChange={() => settingsActions.setSettings(settings)}
+      value={formatTime(settings.pomodoroTime)}
+      onChange={(e) =>
+        settingsActions.setSettings({
+          ...settings,
+          pomodoroTime: parseInt(e.target.value) * 1000 * 60,
+        })
+      }
     />
   )
 }
