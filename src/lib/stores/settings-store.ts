@@ -1,6 +1,5 @@
 import { create } from 'zustand'
-import produce from 'immer'
-import { useTimerStore } from '@/stores/timer-store'
+import { useTimerStore } from '@/lib/stores/timer-store'
 
 export const defaultSettings = {
   pomodoroTime: 1000 * 60 * 25, // 25 minutes
@@ -13,30 +12,33 @@ export const defaultSettings = {
   autoStartBreaks: true,
   longBreakInterval: 4,
   currentLongBreakIntervalCount: 0,
+  alarmVolume: 100,
 }
 
-type Settings = typeof defaultSettings
+export type Settings = typeof defaultSettings
 
 type SettingsStore = {
   userSettings: Settings
   actions: {
     setSettings: (settings: Settings) => void
+    persistNewSettings: () => void
   }
 }
 
-// Maybe use jotai instead.
-// I'd just need to create a function to initially set the state of all the
-// atoms (to make the process simpler), and them use them individually.
-export const useSettingsStore = create<SettingsStore>((set) => ({
+const persistNewSettings = async (settings: Settings) => {
+  await fetch('api/settings/update-all', {
+    method: 'POST',
+    body: JSON.stringify(settings),
+  })
+}
+
+export const useSettingsStore = create<SettingsStore>((set, get) => ({
   userSettings: defaultSettings,
 
   actions: {
-    setSettings: (settings: Settings) =>
-      set(
-        produce<SettingsStore>((state) => {
-          state.userSettings = settings
-        }),
-      ),
+    setSettings: (settings: Settings) => set({ userSettings: settings }),
+
+    persistNewSettings: () => persistNewSettings(get().userSettings),
   },
 }))
 

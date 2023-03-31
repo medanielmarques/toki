@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Timer" ADD COLUMN     "alarmVolume" INTEGER NOT NULL DEFAULT 100;

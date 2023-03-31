@@ -1,6 +1,5 @@
 import { create } from 'zustand'
-import produce from 'immer'
-import { useSettingsStore } from '@/stores/settings-store'
+import { useSettingsStore } from '@/lib/stores/settings-store'
 
 export type Activity = 'pomodoro' | 'shortBreak' | 'longBreak'
 
@@ -66,60 +65,39 @@ const decideNextTimer = (activity: Activity) => {
   }
 }
 
-export const useTimerStore = create<TimerStore>((set, get) => {
-  return {
-    timer: 1000 * 60 * 25, // 25 minutes
-    currentActivity: 'pomodoro',
-    isTimerActive: false,
+export const useTimerStore = create<TimerStore>((set, get) => ({
+  timer: 1000 * 60 * 25, // 25 minutes
+  currentActivity: 'pomodoro',
+  isTimerActive: false,
 
-    actions: {
-      setTimer: (newTime: number) =>
-        set(
-          produce<TimerStore>((state) => {
-            state.timer = newTime
-          }),
-        ),
+  actions: {
+    setTimer: (newTime: number) => set({ timer: newTime }),
 
-      toggleTimer: () =>
-        set(
-          produce<TimerStore>((state) => {
-            state.isTimerActive = !state.isTimerActive
-          }),
-        ),
+    toggleTimer: () => set({ isTimerActive: !get().isTimerActive }),
 
-      countdown: () =>
-        set(
-          produce<TimerStore>((state) => {
-            state.timer = countdown(state.timer)
-          }),
-        ),
+    countdown: () => set({ timer: countdown(get().timer) }),
 
-      switchActivity: (activity: Activity) =>
-        set(
-          produce<TimerStore>((state) => {
-            state.currentActivity = activity
-            state.timer = decideNextTimer(activity)
-            state.isTimerActive = false
-          }),
-        ),
+    switchActivity: (activity: Activity) =>
+      set({
+        currentActivity: activity,
+        timer: decideNextTimer(activity),
+        isTimerActive: false,
+      }),
 
-      decideNextActivity: (sessionStatus: SessionStatus) => {
-        const nextActivity = decideNextActivity(
-          get().currentActivity,
-          sessionStatus,
-        )
+    decideNextActivity: (sessionStatus: SessionStatus) => {
+      const nextActivity = decideNextActivity(
+        get().currentActivity,
+        sessionStatus,
+      )
 
-        set(
-          produce<TimerStore>((state) => {
-            state.currentActivity = nextActivity
-            state.timer = decideNextTimer(nextActivity)
-            state.isTimerActive = false
-          }),
-        )
-      },
+      set({
+        currentActivity: nextActivity,
+        timer: decideNextTimer(nextActivity),
+        isTimerActive: false,
+      })
     },
-  }
-})
+  },
+}))
 
 export const useTimer = () => useTimerStore((state) => state.timer)
 
