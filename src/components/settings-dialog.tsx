@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSettings, useSettingsActions } from '@/stores/settings-store'
+import { useSettings, useSettingsActions } from '@/lib/stores/settings-store'
 import { useState } from 'react'
 
 export const SettingsDialog = () => {

@@ -8,13 +8,13 @@ import {
   useIsTimerActive,
   useTimerActions,
   useTimer,
-} from '@/stores/timer-store'
+} from '@/lib/stores/timer-store'
 import { Header } from '@/header'
 import {
   activityCount,
   useSettings,
   useSettingsActions,
-} from '@/stores/settings-store'
+} from '@/lib/stores/settings-store'
 import { api } from '@/utils/api'
 import { useSession } from 'next-auth/react'
 

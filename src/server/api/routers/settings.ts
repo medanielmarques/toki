@@ -19,6 +19,7 @@ export const settingsRouter = createTRPCRouter({
         autoStartBreaks: true,
         longBreakInterval: true,
         currentLongBreakIntervalCount: true,
+        alarmVolume: true,
       },
     })
 
