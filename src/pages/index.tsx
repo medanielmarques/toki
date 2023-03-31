@@ -10,7 +10,11 @@ import {
   useTimer,
 } from '@/stores/timer-store'
 import { Header } from '@/header'
-import { activityCount, useSettingsActions } from '@/stores/settings-store'
+import {
+  activityCount,
+  useSettings,
+  useSettingsActions,
+} from '@/stores/settings-store'
 import { api } from '@/utils/api'
 import { useSession } from 'next-auth/react'
 
@@ -32,6 +36,7 @@ export default function Pomodoro() {
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
   const currentActivity = useCurrentActivity()
+  const settings = useSettings()
   const settingsActions = useSettingsActions()
 
   const userSettings = api.userSettings.get.useQuery(undefined, {
@@ -49,10 +54,10 @@ export default function Pomodoro() {
   }, [settingsActions, timerActions, userSettings.data])
 
   const [playAlarmSound] = useSound(bubbleSfx, {
-    volume: 0.05,
+    volume: settings.alarmVolume / 100,
   })
   const [playToggleTimerSound] = useSound(toggleTimerSfx, {
-    volume: 0.01,
+    volume: settings.alarmVolume / 100,
   })
 
   useEffect(() => {

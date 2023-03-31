@@ -12,6 +12,7 @@ export const defaultSettings = {
   autoStartBreaks: true,
   longBreakInterval: 4,
   currentLongBreakIntervalCount: 0,
+  alarmVolume: 100,
 }
 
 export type Settings = typeof defaultSettings
