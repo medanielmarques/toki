@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { useSettingsStore } from '@/lib/stores/settings-store'
+import { create } from 'zustand'
 
 export type Activity = 'pomodoro' | 'shortBreak' | 'longBreak'
 

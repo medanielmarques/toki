@@ -1,6 +1,6 @@
+import { type Settings } from '@/lib/stores/settings-store'
 import { authOptions } from '@/server/auth'
 import { prisma } from '@/server/db'
-import { type Settings } from '@/lib/stores/settings-store'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 

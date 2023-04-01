@@ -1,23 +1,22 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useMemo } from 'react'
-
-import useSound from 'use-sound'
-import {
-  type Activity,
-  useCurrentActivity,
-  useIsTimerActive,
-  useTimerActions,
-  useTimer,
-} from '@/lib/stores/timer-store'
 import { Header } from '@/header'
 import {
   activityCount,
   useSettings,
   useSettingsActions,
 } from '@/lib/stores/settings-store'
+import {
+  type Activity,
+  useCurrentActivity,
+  useIsTimerActive,
+  useTimer,
+  useTimerActions,
+} from '@/lib/stores/timer-store'
 import { api } from '@/utils/api'
 import { useSession } from 'next-auth/react'
+import { useMemo } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import useSound from 'use-sound'
 
 const bubbleSfx = '../../audio/bubble.mp3'
 const toggleTimerSfx = '../../audio/toggle-timer.mp3'
