@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Header } from '@/header'
+import { useSounds } from '@/lib/hooks/use-sounds'
 import {
   activityCount,
   useSettings,
@@ -16,10 +17,6 @@ import { api } from '@/utils/api'
 import { useSession } from 'next-auth/react'
 import { useMemo } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
-import useSound from 'use-sound'
-
-const bubbleSfx = '../../audio/bubble.mp3'
-const toggleTimerSfx = '../../audio/toggle-timer.mp3'
 
 export const timerUtils = {
   formatTime: (time: number) => {
@@ -36,7 +33,6 @@ export default function Pomodoro() {
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
   const currentActivity = useCurrentActivity()
-  const settings = useSettings()
   const settingsActions = useSettingsActions()
 
   const userSettings = api.userSettings.get.useQuery(undefined, {
@@ -46,19 +42,14 @@ export default function Pomodoro() {
 
   const session = useSession()
 
+  const { playAlarmSound, playToggleTimerSound } = useSounds()
+
   useMemo(() => {
     if (userSettings.data) {
       settingsActions.setSettings(userSettings.data)
       timerActions.setTimer(userSettings.data.pomodoroTime)
     }
   }, [settingsActions, timerActions, userSettings.data])
-
-  const [playAlarmSound] = useSound(bubbleSfx, {
-    volume: settings.alarmVolume / 100,
-  })
-  const [playToggleTimerSound] = useSound(toggleTimerSfx, {
-    volume: settings.alarmVolume / 100,
-  })
 
   return (
     <>
