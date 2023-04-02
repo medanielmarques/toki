@@ -76,9 +76,6 @@ export default function Pomodoro() {
             <CountdownCircleTimer
               isPlaying={isTimerActive}
               duration={timer / 1000}
-              updateInterval={1}
-              // strokeWidth={18}
-              //
               colors='#A30000'
               onComplete={() => {
                 timerActions.toggleTimer()
