@@ -10,12 +10,15 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSettings, useSettingsActions } from '@/lib/stores/settings-store'
+import { api } from '@/utils/api'
 import { useState } from 'react'
 
 export const SettingsDialog = () => {
   const settingsActions = useSettingsActions()
 
   const [open, setOpen] = useState(false)
+
+  const utils = api.useContext()
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -24,7 +27,10 @@ export const SettingsDialog = () => {
       </DialogTrigger>
 
       <DialogContent
-        onInteractOutside={settingsActions.persistNewSettings}
+        onInteractOutside={() => {
+          settingsActions.persistNewSettings()
+          utils.userSettings.get.invalidate()
+        }}
         className='sm:max-w-[425px]'
       >
         <DialogHeader>
