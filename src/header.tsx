@@ -1,6 +1,6 @@
 import { SettingsDialog } from '@/components/settings-dialog'
-import { timerUtils } from '@/pages'
 import { useTimer } from '@/lib/stores/timer-store'
+import { timerUtils } from '@/pages'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'

@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useEffect, useMemo } from 'react'
-
-import useSound from 'use-sound'
-import {
-  type Activity,
-  useCurrentActivity,
-  useIsTimerActive,
-  useTimerActions,
-  useTimer,
-} from '@/lib/stores/timer-store'
 import { Header } from '@/header'
 import {
   activityCount,
   useSettings,
   useSettingsActions,
 } from '@/lib/stores/settings-store'
+import {
+  type Activity,
+  useCurrentActivity,
+  useIsTimerActive,
+  useTimer,
+  useTimerActions,
+} from '@/lib/stores/timer-store'
 import { api } from '@/utils/api'
 import { useSession } from 'next-auth/react'
+import { useMemo } from 'react'
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import useSound from 'use-sound'
 
 const bubbleSfx = '../../audio/bubble.mp3'
 const toggleTimerSfx = '../../audio/toggle-timer.mp3'
@@ -60,42 +60,6 @@ export default function Pomodoro() {
     volume: settings.alarmVolume / 100,
   })
 
-  useEffect(() => {
-    if (isTimerActive) {
-      const countdownInterval = setInterval(timerActions.countdown, 1000)
-
-      if (timer === 0) {
-        clearInterval(countdownInterval)
-        timerActions.toggleTimer()
-        timerActions.decideNextActivity(session.status)
-        playAlarmSound()
-
-        if (session.status === 'authenticated') {
-          updateActivityCount.mutate(
-            { field: currentActivity },
-            {
-              onSuccess: () => {
-                userSettings.refetch()
-              },
-            },
-          )
-        }
-      }
-      return () => {
-        clearInterval(countdownInterval)
-      }
-    }
-  }, [
-    timer,
-    isTimerActive,
-    playAlarmSound,
-    timerActions,
-    updateActivityCount,
-    userSettings,
-    currentActivity,
-    session.status,
-  ])
-
   return (
     <>
       <Header />
@@ -109,9 +73,35 @@ export default function Pomodoro() {
               <ActivityButton activity='longBreak' label='Long Break' />
             </div>
 
-            <h1 className='text-9xl font-bold'>
-              {timerUtils.formatTime(timer)}
-            </h1>
+            <CountdownCircleTimer
+              isPlaying={isTimerActive}
+              duration={timer / 1000}
+              colors='#A30000'
+              onComplete={() => {
+                timerActions.toggleTimer()
+                timerActions.decideNextActivity(session.status)
+                playAlarmSound()
+
+                if (session.status === 'authenticated') {
+                  updateActivityCount.mutate(
+                    { field: currentActivity },
+                    {
+                      onSuccess: () => {
+                        userSettings.refetch()
+                      },
+                    },
+                  )
+                }
+
+                return { shouldRepeat: true }
+              }}
+            >
+              {({ remainingTime }) => {
+                console.log({ timer: timer / 1000, remainingTime }, 'yeah')
+
+                return timerUtils.formatTime(remainingTime * 1000)
+              }}
+            </CountdownCircleTimer>
 
             <button
               className='w-9/12 rounded-lg border-2 border-white px-8 py-6 text-3xl font-bold text-white  hover:bg-white hover:text-[#bb3e4a]'

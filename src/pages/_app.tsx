@@ -1,11 +1,9 @@
-import { type AppType } from 'next/app'
+import '@/styles/globals.css'
+import { api } from '@/utils/api'
+import { Nunito } from '@next/font/google'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
-import { Nunito } from '@next/font/google'
-
-import { api } from '@/utils/api'
-
-import '@/styles/globals.css'
+import { type AppType } from 'next/app'
 
 const nunito = Nunito({
   subsets: ['latin'],
