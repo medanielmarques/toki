@@ -21,7 +21,7 @@ type SettingsStore = {
   userSettings: Settings
   actions: {
     setSettings: (settings: Settings) => void
-    persistNewSettings: () => void
+    persistNewSettings: () => Promise<void>
   }
 }
 
@@ -38,7 +38,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   actions: {
     setSettings: (settings: Settings) => set({ userSettings: settings }),
 
-    persistNewSettings: () => persistNewSettings(get().userSettings),
+    persistNewSettings: async () => persistNewSettings(get().userSettings),
   },
 }))
 
