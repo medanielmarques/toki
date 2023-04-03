@@ -11,7 +11,7 @@ export const useSounds = () => {
     volume: settings.alarmVolume / 100,
   })
 
-  const [playToggleTimerSound] = useSound(toggleTimerSfx, { volume: 100 })
+  const [playToggleTimerSound] = useSound(toggleTimerSfx, { volume: 1 })
 
   return { playAlarmSound, playToggleTimerSound }
 }

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Header } from '@/header'
 import { useSounds } from '@/lib/hooks/use-sounds'
 import {
   activityCount,
-  useSettings,
+  defaultSettings,
   useSettingsActions,
 } from '@/lib/stores/settings-store'
 import {
@@ -14,22 +13,12 @@ import {
   useTimerActions,
 } from '@/lib/stores/timer-store'
 import { api } from '@/utils/api'
+import { timerUtils } from '@/utils/timer'
 import { useSession } from 'next-auth/react'
 import { useMemo } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
-export const timerUtils = {
-  formatTime: (time: number) => {
-    const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
-    const seconds = Math.floor(time / 1000) % 60
-    const minutes = Math.floor(time / 1000 / 60)
-
-    return `${addZeroBefore(minutes)}:${addZeroBefore(seconds)}`
-  },
-}
-
 export default function Pomodoro() {
-  const timer = useTimer()
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
   const currentActivity = useCurrentActivity()
@@ -37,12 +26,10 @@ export default function Pomodoro() {
 
   const userSettings = api.userSettings.get.useQuery(undefined, {
     refetchOnWindowFocus: false,
+    initialData: defaultSettings,
   })
-  const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
 
-  const session = useSession()
-
-  const { playAlarmSound, playToggleTimerSound } = useSounds()
+  const { playToggleTimerSound } = useSounds()
 
   useMemo(() => {
     if (userSettings.data) {
@@ -64,35 +51,7 @@ export default function Pomodoro() {
               <ActivityButton activity='longBreak' label='Long Break' />
             </div>
 
-            <CountdownCircleTimer
-              isPlaying={isTimerActive}
-              duration={timer / 1000}
-              colors='#A30000'
-              onComplete={() => {
-                timerActions.toggleTimer()
-                timerActions.decideNextActivity(session.status)
-                playAlarmSound()
-
-                if (session.status === 'authenticated') {
-                  updateActivityCount.mutate(
-                    { field: currentActivity },
-                    {
-                      onSuccess: () => {
-                        userSettings.refetch()
-                      },
-                    },
-                  )
-                }
-
-                return { shouldRepeat: true }
-              }}
-            >
-              {({ remainingTime }) => {
-                console.log({ timer: timer / 1000, remainingTime }, 'yeah')
-
-                return timerUtils.formatTime(remainingTime * 1000)
-              }}
-            </CountdownCircleTimer>
+            <Timer />
 
             <button
               className='w-9/12 rounded-lg border-2 border-white px-8 py-6 text-3xl font-bold text-white  hover:bg-white hover:text-[#bb3e4a]'
@@ -111,6 +70,55 @@ export default function Pomodoro() {
         </div>
       </div>
     </>
+  )
+}
+
+const Timer = () => {
+  const timer = useTimer()
+  const isTimerActive = useIsTimerActive()
+  const timerActions = useTimerActions()
+  const currentActivity = useCurrentActivity()
+
+  const session = useSession()
+  const { playAlarmSound } = useSounds()
+
+  const userSettings = api.userSettings.get.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    initialData: defaultSettings,
+  })
+
+  const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
+
+  return (
+    <CountdownCircleTimer
+      isPlaying={isTimerActive}
+      duration={timer / 1000}
+      colors='#A30000'
+      onComplete={() => {
+        timerActions.toggleTimer()
+        timerActions.decideNextActivity(session.status)
+        playAlarmSound()
+
+        if (session.status === 'authenticated') {
+          updateActivityCount.mutate(
+            { field: currentActivity },
+            {
+              onSuccess: () => {
+                userSettings.refetch()
+              },
+            },
+          )
+        }
+
+        return { shouldRepeat: true }
+      }}
+    >
+      {({ remainingTime }) => {
+        console.log({ timer: timer / 1000, remainingTime }, 'yeah')
+
+        return timerUtils.formatTime(remainingTime * 1000)
+      }}
+    </CountdownCircleTimer>
   )
 }
 

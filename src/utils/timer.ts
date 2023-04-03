@@ -1,0 +1,9 @@
+export const timerUtils = {
+  formatTime: (time: number) => {
+    const addZeroBefore = (time: number) => ('0' + time.toString()).slice(-2)
+    const seconds = Math.floor(time / 1000) % 60
+    const minutes = Math.floor(time / 1000 / 60)
+
+    return `${addZeroBefore(minutes)}:${addZeroBefore(seconds)}`
+  },
+}
