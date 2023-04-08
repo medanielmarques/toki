@@ -14,11 +14,20 @@ import { api } from '@/utils/api'
 import { useState } from 'react'
 
 export const SettingsDialog = () => {
+  const settings = useSettings()
   const settingsActions = useSettingsActions()
 
   const [open, setOpen] = useState(false)
 
   const utils = api.useContext()
+
+  const saveNewSettings = async () => {
+    utils.userSettings.get.setData(undefined, settings)
+
+    return await settingsActions
+      .persistNewSettings()
+      .then(utils.userSettings.get.invalidate)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -27,10 +36,8 @@ export const SettingsDialog = () => {
       </DialogTrigger>
 
       <DialogContent
-        onInteractOutside={() => {
-          settingsActions.persistNewSettings()
-          utils.userSettings.get.invalidate()
-        }}
+        onInteractOutside={saveNewSettings}
+        onEscapeKeyDown={saveNewSettings}
         className='sm:max-w-[425px]'
       >
         <DialogHeader>
@@ -48,7 +55,14 @@ export const SettingsDialog = () => {
         </div>
 
         <DialogFooter>
-          <Button onClick={() => setOpen(false)}>Save changes</Button>
+          <Button
+            onClick={() => {
+              saveNewSettings()
+              setOpen(false)
+            }}
+          >
+            Save changes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

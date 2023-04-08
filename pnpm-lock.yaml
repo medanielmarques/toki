@@ -8,6 +8,7 @@ specifiers:
   '@radix-ui/react-dialog': ^1.0.3
   '@radix-ui/react-label': ^2.0.1
   '@tanstack/react-query': ^4.20.2
+  '@tanstack/react-query-devtools': ^4.28.0
   '@trivago/prettier-plugin-sort-imports': ^4.1.1
   '@trpc/client': ^10.9.0
   '@trpc/next': ^10.9.0
@@ -25,7 +26,6 @@ specifiers:
   clsx: ^1.2.1
   eslint: ^8.30.0
   eslint-config-next: 13.1.6
-  jotai: ^2.0.2
   lucide-react: ^0.125.0
   next: 13.1.6
   next-auth: ^4.19.0
@@ -34,7 +34,6 @@ specifiers:
   prettier-plugin-tailwindcss: ^0.2.1
   prisma: ^4.9.0
   react: 18.2.0
-  react-countdown-circle-timer: ^3.2.1
   react-dom: 18.2.0
   superjson: 1.9.1
   tailwind-merge: ^1.10.0
@@ -52,18 +51,17 @@ dependencies:
   '@radix-ui/react-dialog': 1.0.3_zula6vjvt3wdocc4mwcxqa6nzi
   '@radix-ui/react-label': 2.0.1_biqbaboplfbrettd7655fr4n2y
   '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+  '@tanstack/react-query-devtools': 4.28.0_bzphmdwvicyhtx5eo3azinrh54
   '@trpc/client': 10.12.0_@trpc+server@10.12.0
   '@trpc/next': 10.12.0_3wi4bq3cjtt55c7zuonh5a5o34
   '@trpc/react-query': 10.12.0_t6pkpjuzl4hzq7yqu7znt6owvu
   '@trpc/server': 10.12.0
   class-variance-authority: 0.4.0_typescript@4.9.5
   clsx: 1.2.1
-  jotai: 2.0.2_react@18.2.0
   lucide-react: 0.125.0_react@18.2.0
   next: 13.1.6_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.19.2_3vryta7zmbcsw4rrqf4axjqggm
   react: 18.2.0
-  react-countdown-circle-timer: 3.2.1_react@18.2.0
   react-dom: 18.2.0_react@18.2.0
   superjson: 1.9.1
   tailwind-merge: 1.10.0
@@ -668,8 +666,30 @@ packages:
       tslib: 2.5.0
     dev: false
 
+  /@tanstack/match-sorter-utils/8.8.4:
+    resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
+    engines: {node: '>=12'}
+    dependencies:
+      remove-accents: 0.4.2
+    dev: false
+
   /@tanstack/query-core/4.24.9:
     resolution: {integrity: sha512-pZQ2NpdaHzx8gPPkAPh06d6zRkjfonUzILSYBXrdHDapP2eaBbGsx5L4/dMF+fyAglFzQZdDDzZgAykbM20QVw==}
+    dev: false
+
+  /@tanstack/react-query-devtools/4.28.0_bzphmdwvicyhtx5eo3azinrh54:
+    resolution: {integrity: sha512-1SnoMw1CWn8FdPEIHvlAzmMBX3heXJo11fyBtt+FzYAHj5yFC8P67Kpgi0HpLkY7SLnd6QK/7qFkpeH4AQbgZg==}
+    peerDependencies:
+      '@tanstack/react-query': 4.28.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.8.4
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      superjson: 1.12.2
+      use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
   /@tanstack/react-query/4.24.9_biqbaboplfbrettd7655fr4n2y:
@@ -2291,18 +2311,6 @@ packages:
     resolution: {integrity: sha512-wW1u3cK81b+SFcHjGC8zw87yuyUweEFe0UJirrXEw1NasW00eF7sZjeG3SLBGz001ozxQ46Y9sofDvhBmWFtXQ==}
     dev: false
 
-  /jotai/2.0.2_react@18.2.0:
-    resolution: {integrity: sha512-0yOked08Swa84LUbBjtj7ZLZrE05n3u50rHeZ+bsT86thUjcy0kFgQz9GmEWhYbQDFoT1G8Ww6edSj/MBJHO4A==}
-    engines: {node: '>=12.20.0'}
-    peerDependencies:
-      react: '>=17.0.0'
-    peerDependenciesMeta:
-      react:
-        optional: true
-    dependencies:
-      react: 18.2.0
-    dev: false
-
   /js-sdsl/4.3.0:
     resolution: {integrity: sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ==}
     dev: true
@@ -2895,14 +2903,6 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
 
-  /react-countdown-circle-timer/3.2.1_react@18.2.0:
-    resolution: {integrity: sha512-yBAy/9ILXOiFbLBM+3jS72TW5LeRcH8wkRC9NNqMpUkCXkGjSnaeRbJMsR9lsYF0oVXjSDbJaRbCuVMT+9HnKA==}
-    peerDependencies:
-      react: '>=16.8.0'
-    dependencies:
-      react: 18.2.0
-    dev: false
-
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
@@ -3011,6 +3011,10 @@ packages:
     resolution: {integrity: sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==}
     engines: {node: '>=8'}
     dev: true
+
+  /remove-accents/0.4.2:
+    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
+    dev: false
 
   /resolve-from/4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -3193,6 +3197,13 @@ packages:
     dependencies:
       client-only: 0.0.1
       react: 18.2.0
+    dev: false
+
+  /superjson/1.12.2:
+    resolution: {integrity: sha512-ugvUo9/WmvWOjstornQhsN/sR9mnGtWGYeTxFuqLb4AiT4QdUavjGFRALCPKWWnAiUJ4HTpytj5e0t5HoMRkXg==}
+    engines: {node: '>=10'}
+    dependencies:
+      copy-anything: 3.0.3
     dev: false
 
   /superjson/1.9.1:

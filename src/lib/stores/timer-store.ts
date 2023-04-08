@@ -14,7 +14,10 @@ type TimerStore = {
     toggleTimer: () => void
     countdown: () => void
     switchActivity: (activity: Activity) => void
-    decideNextActivity: (session: SessionStatus) => void
+    decideNextActivity: (
+      session: SessionStatus,
+      invalidateUserSettings: () => void,
+    ) => void
   }
 }
 
@@ -84,11 +87,16 @@ export const useTimerStore = create<TimerStore>((set, get) => ({
         isTimerActive: false,
       }),
 
-    decideNextActivity: (sessionStatus: SessionStatus) => {
+    decideNextActivity: (
+      sessionStatus: SessionStatus,
+      invalidateUserSettings,
+    ) => {
       const nextActivity = decideNextActivity(
         get().currentActivity,
         sessionStatus,
       )
+
+      invalidateUserSettings()
 
       set({
         currentActivity: nextActivity,
