@@ -15,11 +15,7 @@ import {
 } from '@/lib/stores/timer-store'
 import { api } from '@/utils/api'
 import { timerUtils } from '@/utils/timer'
-import { useSession } from 'next-auth/react'
-import React, { useEffect, useMemo } from 'react'
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
-
-import { settings } from '.eslintrc.cjs'
+import { useEffect, useMemo } from 'react'
 
 export default function Pomodoro() {
   const isTimerActive = useIsTimerActive()
@@ -47,7 +43,7 @@ export default function Pomodoro() {
 
       return () => clearInterval(countdownInterval)
     }
-  }, [isTimerActive])
+  }, [isTimerActive, timerActions.countdown])
 
   return (
     <>
@@ -87,30 +83,34 @@ const NewTimer = () => {
   const timer = useTimer()
   const settings = useSettings()
 
-  const timeLeft = settings.pomodoroTime - timer
-
   const calculateTimeFraction = () => {
-    const rawTimeFraction = timeLeft / settings.pomodoroTime
-    return rawTimeFraction - (1 / settings.pomodoroTime) * (1 - rawTimeFraction)
+    const timeLimit = settings.pomodoroTime / 1000
+    const timeLeft = timer / 1000
+
+    const rawTimeFraction = timeLeft / timeLimit
+
+    const timeFraction =
+      rawTimeFraction - (1 / timeLimit) * (1 - rawTimeFraction)
+
+    return (timeFraction * 283).toFixed(0)
   }
 
   return (
-    <div className='relative h-[300px] w-[300px]'>
+    <div className='relative h-80 w-80'>
       <svg
-        className='scale-x-[-1]'
+        className='scale-x-100'
         viewBox='0 0 100 100'
         xmlns='http://www.w3.org/2000/svg'
       >
-        <g className='stroke-none. fill-none'>
+        <g className='fill-none stroke-none'>
           <circle
-            className='stroke-gray-500 stroke-[7px]'
+            className='stroke-gray-300 stroke-[7px]'
             cx='50'
             cy='50'
             r='45'
-          ></circle>
+          />
           <path
-            id='base-timer-path-remaining'
-            stroke-dasharray={`${calculateTimeFraction() * 283} 283`}
+            stroke-dasharray={`${calculateTimeFraction()} 283`}
             className='base-timer__path-remaining'
             d='
                 M 50, 50
@@ -118,65 +118,13 @@ const NewTimer = () => {
                 a 45,45 0 1,0 90,0
                 a 45,45 0 1,0 -90,0
               '
-          ></path>
+          />
         </g>
       </svg>
-      <span
-        id='base-timer-label'
-        className='absolute top-0 flex h-[300px] w-[300px] items-center justify-center text-5xl'
-      >
+      <span className='absolute top-0 flex h-80 w-80 items-center justify-center text-5xl'>
         {timerUtils.formatTime(timer)}
       </span>
     </div>
-  )
-}
-
-const Timer = () => {
-  const settings = useSettings()
-  const isTimerActive = useIsTimerActive()
-  const timerActions = useTimerActions()
-  const currentActivity = useCurrentActivity()
-
-  const session = useSession()
-  const { playAlarmSound } = useSounds()
-
-  const userSettings = api.userSettings.get.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    initialData: defaultSettings,
-  })
-
-  const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
-
-  return (
-    <CountdownCircleTimer
-      isPlaying={isTimerActive}
-      duration={settings.pomodoroTime / 1000}
-      updateInterval={1}
-      colors='#A30000'
-      onComplete={() => {
-        timerActions.toggleTimer()
-        timerActions.decideNextActivity(session.status)
-        playAlarmSound()
-
-        if (session.status === 'authenticated') {
-          updateActivityCount.mutate(
-            { field: currentActivity },
-            {
-              onSuccess: () => {
-                userSettings.refetch()
-              },
-            },
-          )
-        }
-
-        return { shouldRepeat: true }
-      }}
-    >
-      {({ remainingTime }) => {
-        timerActions.setTimer(remainingTime * 1000)
-        return timerUtils.formatTime(remainingTime * 1000)
-      }}
-    </CountdownCircleTimer>
   )
 }
 

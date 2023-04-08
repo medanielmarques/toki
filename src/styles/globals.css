@@ -6,16 +6,6 @@ body {
   background-color: #bb3e4a;
   color: white;
 }
-body {
-  font-family: sans-serif;
-  display: grid;
-  height: 100vh;
-  place-items: center;
-}
-
-.base-timer__svg {
-  transform: scaleX(-1);
-}
 
 .base-timer__path-remaining {
   stroke-width: 7px;
