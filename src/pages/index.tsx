@@ -15,20 +15,50 @@ import {
 } from '@/lib/stores/timer-store'
 import { api } from '@/utils/api'
 import { timerUtils } from '@/utils/timer'
+import { useSession } from 'next-auth/react'
 import { useEffect, useMemo } from 'react'
 
 export default function Pomodoro() {
+  const timer = useTimer()
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
   const currentActivity = useCurrentActivity()
   const settingsActions = useSettingsActions()
+
+  const session = useSession()
 
   const userSettings = api.userSettings.get.useQuery(undefined, {
     refetchOnWindowFocus: false,
     initialData: defaultSettings,
   })
 
-  const { playToggleTimerSound } = useSounds()
+  const utils = api.useContext()
+
+  const updateActivityCount = api.userSettings.updateActivityCount.useMutation()
+
+  const { playToggleTimerSound, playAlarmSound } = useSounds()
+
+  const countdown = () => {
+    if (isTimerActive) {
+      const countdownInterval = setInterval(timerActions.countdown, 1000)
+
+      if (timer === 0) {
+        timerActions.toggleTimer()
+        timerActions.decideNextActivity(
+          session.status,
+          utils.userSettings.get.invalidate,
+        )
+        playAlarmSound()
+
+        if (session.status === 'authenticated') {
+          updateActivityCount.mutate({ field: currentActivity })
+        }
+      }
+      return () => {
+        clearInterval(countdownInterval)
+      }
+    }
+  }
 
   useMemo(() => {
     if (userSettings.data) {
@@ -37,13 +67,17 @@ export default function Pomodoro() {
     }
   }, [settingsActions, timerActions, userSettings.data])
 
-  useEffect(() => {
-    if (isTimerActive) {
-      const countdownInterval = setInterval(timerActions.countdown, 1000)
-
-      return () => clearInterval(countdownInterval)
-    }
-  }, [isTimerActive, timerActions.countdown])
+  useEffect(countdown, [
+    timer,
+    isTimerActive,
+    playAlarmSound,
+    timerActions,
+    updateActivityCount,
+    userSettings,
+    currentActivity,
+    session.status,
+    utils.userSettings.get.invalidate,
+  ])
 
   return (
     <>
@@ -58,7 +92,7 @@ export default function Pomodoro() {
               <ActivityButton activity='longBreak' label='Long Break' />
             </div>
 
-            <NewTimer />
+            <Timer />
 
             <button
               className='w-9/12 rounded-lg border-2 border-white px-8 py-6 text-3xl font-bold text-white  hover:bg-white hover:text-[#bb3e4a]'
@@ -79,13 +113,16 @@ export default function Pomodoro() {
   )
 }
 
-const NewTimer = () => {
+const Timer = () => {
   const timer = useTimer()
   const settings = useSettings()
+  const currentActivity = useCurrentActivity()
 
   const calculateTimeFraction = () => {
-    const timeLimit = settings.pomodoroTime / 1000
+    const timeLimit = settings[`${currentActivity}Time`] / 1000
     const timeLeft = timer / 1000
+
+    console.log(timeLeft, 'timeLimit')
 
     const rawTimeFraction = timeLeft / timeLimit
 
@@ -132,6 +169,8 @@ const ActivityButton = (props: { label: string; activity: Activity }) => {
   const currentActivity = useCurrentActivity()
   const timerActions = useTimerActions()
 
+  const utils = api.useContext()
+
   return (
     <button
       className={`rounded-2xl py-3 px-6 text-lg font-bold ${
@@ -139,7 +178,10 @@ const ActivityButton = (props: { label: string; activity: Activity }) => {
           ? 'bg-[#b04646fd]'
           : 'hover:bg-[#ae5656fd]'
       }`}
-      onClick={() => timerActions.switchActivity(props.activity)}
+      onClick={() => {
+        timerActions.switchActivity(props.activity)
+        utils.userSettings.get.invalidate()
+      }}
     >
       {props.label}
     </button>
