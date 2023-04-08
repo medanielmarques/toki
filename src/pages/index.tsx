@@ -3,6 +3,7 @@ import { useSounds } from '@/lib/hooks/use-sounds'
 import {
   activityCount,
   defaultSettings,
+  useSettings,
   useSettingsActions,
 } from '@/lib/stores/settings-store'
 import {
@@ -15,8 +16,10 @@ import {
 import { api } from '@/utils/api'
 import { timerUtils } from '@/utils/timer'
 import { useSession } from 'next-auth/react'
-import { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+
+import { settings } from '.eslintrc.cjs'
 
 export default function Pomodoro() {
   const isTimerActive = useIsTimerActive()
@@ -38,6 +41,14 @@ export default function Pomodoro() {
     }
   }, [settingsActions, timerActions, userSettings.data])
 
+  useEffect(() => {
+    if (isTimerActive) {
+      const countdownInterval = setInterval(timerActions.countdown, 1000)
+
+      return () => clearInterval(countdownInterval)
+    }
+  }, [isTimerActive])
+
   return (
     <>
       <Header />
@@ -51,13 +62,12 @@ export default function Pomodoro() {
               <ActivityButton activity='longBreak' label='Long Break' />
             </div>
 
-            <Timer />
+            <NewTimer />
 
             <button
               className='w-9/12 rounded-lg border-2 border-white px-8 py-6 text-3xl font-bold text-white  hover:bg-white hover:text-[#bb3e4a]'
               onClick={() => {
                 timerActions.toggleTimer()
-
                 playToggleTimerSound()
               }}
             >
@@ -73,8 +83,56 @@ export default function Pomodoro() {
   )
 }
 
-const Timer = () => {
+const NewTimer = () => {
   const timer = useTimer()
+  const settings = useSettings()
+
+  const timeLeft = settings.pomodoroTime - timer
+
+  const calculateTimeFraction = () => {
+    const rawTimeFraction = timeLeft / settings.pomodoroTime
+    return rawTimeFraction - (1 / settings.pomodoroTime) * (1 - rawTimeFraction)
+  }
+
+  return (
+    <div className='relative h-[300px] w-[300px]'>
+      <svg
+        className='scale-x-[-1]'
+        viewBox='0 0 100 100'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <g className='stroke-none. fill-none'>
+          <circle
+            className='stroke-gray-500 stroke-[7px]'
+            cx='50'
+            cy='50'
+            r='45'
+          ></circle>
+          <path
+            id='base-timer-path-remaining'
+            stroke-dasharray={`${calculateTimeFraction() * 283} 283`}
+            className='base-timer__path-remaining'
+            d='
+                M 50, 50
+                m -45, 0
+                a 45,45 0 1,0 90,0
+                a 45,45 0 1,0 -90,0
+              '
+          ></path>
+        </g>
+      </svg>
+      <span
+        id='base-timer-label'
+        className='absolute top-0 flex h-[300px] w-[300px] items-center justify-center text-5xl'
+      >
+        {timerUtils.formatTime(timer)}
+      </span>
+    </div>
+  )
+}
+
+const Timer = () => {
+  const settings = useSettings()
   const isTimerActive = useIsTimerActive()
   const timerActions = useTimerActions()
   const currentActivity = useCurrentActivity()
@@ -92,7 +150,8 @@ const Timer = () => {
   return (
     <CountdownCircleTimer
       isPlaying={isTimerActive}
-      duration={timer / 1000}
+      duration={settings.pomodoroTime / 1000}
+      updateInterval={1}
       colors='#A30000'
       onComplete={() => {
         timerActions.toggleTimer()
@@ -114,8 +173,7 @@ const Timer = () => {
       }}
     >
       {({ remainingTime }) => {
-        console.log({ timer: timer / 1000, remainingTime }, 'yeah')
-
+        timerActions.setTimer(remainingTime * 1000)
         return timerUtils.formatTime(remainingTime * 1000)
       }}
     </CountdownCircleTimer>
