@@ -1,3 +1,4 @@
+import { ProfileSettings } from '@/components/profile-settings'
 import { SettingsDialog } from '@/components/settings-dialog'
 import { Head } from '@/header'
 import { useSounds } from '@/lib/hooks/use-sounds'
@@ -15,7 +16,6 @@ import {
 import { api } from '@/utils/api'
 import { timerUtils } from '@/utils/timer'
 import { useSession } from 'next-auth/react'
-import Image from 'next/image'
 import { useEffect, useMemo } from 'react'
 
 export default function Pomodoro() {
@@ -87,15 +87,7 @@ export default function Pomodoro() {
         <div className='container flex flex-col gap-12'>
           <div className='mx-auto flex items-center gap-2'>
             <SettingsDialog />
-            {session.data ? (
-              <Image
-                className='rounded-full border-2'
-                src={session.data.user.image || 'images/user.svg'}
-                width={32}
-                height={32}
-                alt='user pic'
-              />
-            ) : null}
+            <ProfileSettings />
           </div>
 
           <div className='flex flex-col items-center gap-6'>
@@ -129,8 +121,6 @@ const Timer = () => {
     const timeLimit = settings[`${currentActivity}Time`] / 1000
     const timeLeft = timer / 1000
 
-    console.log(timeLeft, 'timeLimit')
-
     const rawTimeFraction = timeLeft / timeLimit
 
     const timeFraction =
@@ -154,7 +144,7 @@ const Timer = () => {
             r='45'
           />
           <path
-            stroke-dasharray={`${calculateTimeFraction()} 283`}
+            strokeDasharray={`${calculateTimeFraction()} 283`}
             className='base-timer__path-remaining'
             d='
                 M 50, 50

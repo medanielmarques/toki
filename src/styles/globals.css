@@ -12,10 +12,10 @@ body {
   color: white;
 }
 
-button:hover {
+/* button:hover {
   background: linear-gradient(315deg, #9795ef 0%, #f9c5d1 75%);
   color: white;
-}
+} */
 
 .base-timer__path-remaining {
   stroke-width: 7px;
