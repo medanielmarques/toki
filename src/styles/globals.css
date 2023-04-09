@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 body {
-  background-color: #bb3e4a;
+  background: linear-gradient(315deg, #f9c5d1 0%, #9795ef 74%);
+
+  color: white;
+}
+
+button:hover {
+  background: linear-gradient(315deg, #9795ef 0%, #f9c5d1 75%);
   color: white;
 }
 
@@ -14,5 +20,5 @@ body {
   transform-origin: center;
   transition: 1s linear all;
   fill-rule: nonzero;
-  stroke: white;
+  stroke: rgba(255, 255, 255, 0.8);
 }

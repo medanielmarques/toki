@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSettings, useSettingsActions } from '@/lib/stores/settings-store'
 import { api } from '@/utils/api'
+import { Faders } from '@phosphor-icons/react'
 import { useState } from 'react'
 
 export const SettingsDialog = () => {
@@ -32,7 +33,10 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>Settings</Button>
+        <div className='flex cursor-pointer gap-3 rounded-full py-4 px-6 hover:bg-white/10'>
+          <span className='text-white/90'>Settings</span>
+          <Faders size={24} />
+        </div>
       </DialogTrigger>
 
       <DialogContent
