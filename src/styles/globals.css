@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background: linear-gradient(315deg, #f9c5d1 0%, #9795ef 74%);
+html {
+  height: -webkit-fill-available;
+}
 
+body {
+  height: -webkit-fill-available;
+  background: linear-gradient(315deg, #f9c5d1 0%, #9795ef 74%);
   color: white;
 }
 
