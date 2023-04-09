@@ -1,4 +1,5 @@
 import { SettingsDialog } from '@/components/settings-dialog'
+import { Head } from '@/header'
 import { useSounds } from '@/lib/hooks/use-sounds'
 import {
   defaultSettings,
@@ -14,6 +15,7 @@ import {
 import { api } from '@/utils/api'
 import { timerUtils } from '@/utils/timer'
 import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 import { useEffect, useMemo } from 'react'
 
 export default function Pomodoro() {
@@ -79,20 +81,33 @@ export default function Pomodoro() {
 
   return (
     <>
+      <Head />
+
       <div className='flex h-screen flex-col items-center justify-between gap-6 px-4 pt-8 pb-6'>
         <div className='container flex flex-col gap-12'>
-          <div className='mx-auto'>
+          <div className='mx-auto flex items-center gap-2'>
             <SettingsDialog />
+            {session.data ? (
+              <Image
+                className='rounded-full border-2'
+                src={session.data.user.image || 'images/user.svg'}
+                width={32}
+                height={32}
+                alt='user pic'
+              />
+            ) : null}
           </div>
 
           <div className='flex flex-col items-center gap-6'>
             <Timer />
-            <p className='text-xl text-white/100'>Pomodoro</p>
+            <p className='text-xl text-white/100 md:text-2xl'>
+              {timerUtils.formattedCurrentActivity(currentActivity)}
+            </p>
           </div>
         </div>
 
         <button
-          className='container rounded-3xl bg-white/75 px-8 py-5 text-2xl font-medium text-black'
+          className='container max-w-xl rounded-3xl bg-white/75 px-8 py-5 text-2xl font-medium text-black'
           onClick={() => {
             timerActions.toggleTimer()
             playToggleTimerSound()
@@ -125,7 +140,7 @@ const Timer = () => {
   }
 
   return (
-    <div className='relative h-56 w-56'>
+    <div className='relative h-56 w-56 md:h-72 md:w-72'>
       <svg
         className='scale-x-[-1]'
         viewBox='0 0 100 100'
@@ -150,7 +165,7 @@ const Timer = () => {
           />
         </g>
       </svg>
-      <span className='absolute top-0 flex h-56 w-56 items-center justify-center text-4xl'>
+      <span className='absolute top-0 flex h-56 w-56 items-center justify-center text-4xl md:h-72 md:w-72 md:text-5xl'>
         {timerUtils.formatTime(timer)}
       </span>
     </div>

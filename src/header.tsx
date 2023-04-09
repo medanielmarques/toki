@@ -1,8 +1,8 @@
 import { SettingsDialog } from '@/components/settings-dialog'
-import { useTimer } from '@/lib/stores/timer-store'
+import { useCurrentActivity, useTimer } from '@/lib/stores/timer-store'
 import { timerUtils } from '@/utils/timer'
 import { signIn, signOut, useSession } from 'next-auth/react'
-import Head from 'next/head'
+import NextHead from 'next/head'
 import Image from 'next/image'
 
 export const Header = () => {
@@ -11,9 +11,9 @@ export const Header = () => {
 
   return (
     <>
-      <Head>
+      <NextHead>
         <title>{`Toki - ${timerUtils.formatTime(timer)} - Pomodoro`}</title>
-      </Head>
+      </NextHead>
 
       <div className='mx-auto flex h-16 items-center justify-center gap-4 px-8'>
         <Image src='/images/toki-logo.svg' width={96} height={96} alt='logo' />
@@ -41,3 +41,16 @@ const HeaderButton = (props: { onClick?: () => void; label: string }) => (
     {props.label}
   </button>
 )
+
+export const Head = () => {
+  const timer = useTimer()
+  const currentActivity = useCurrentActivity()
+
+  return (
+    <NextHead>
+      <title>{`Toki - ${timerUtils.formatTime(
+        timer,
+      )} - ${timerUtils.formattedCurrentActivity(currentActivity)}`}</title>
+    </NextHead>
+  )
+}

@@ -11,6 +11,9 @@ import withBundleAnalyzer from '@next/bundle-analyzer'
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
+  images: {
+    domains: ['lh3.googleusercontent.com'],
+  },
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you

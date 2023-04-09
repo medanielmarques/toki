@@ -33,8 +33,8 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className='flex cursor-pointer gap-3 rounded-full py-4 px-6 hover:bg-white/10'>
-          <span className='text-white/90'>Settings</span>
+        <div className='flex cursor-pointer gap-3 rounded-full py-4 px-6 hover:bg-white/20'>
+          <span className='text-white/90 md:text-lg'>Settings</span>
           <Faders size={24} />
         </div>
       </DialogTrigger>
