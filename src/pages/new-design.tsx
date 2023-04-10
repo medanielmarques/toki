@@ -1,4 +1,4 @@
-import { ProfileSettings } from '@/components/profile-settings'
+import { ProfileSettingsMenu } from '@/components/profile-settings-menu'
 import { SettingsDialog } from '@/components/settings-dialog'
 import { Head } from '@/header'
 import { useSounds } from '@/lib/hooks/use-sounds'
@@ -87,7 +87,7 @@ export default function Pomodoro() {
         <div className='container flex flex-col gap-12'>
           <div className='mx-auto flex items-center gap-2'>
             <SettingsDialog />
-            <ProfileSettings />
+            <ProfileSettingsMenu />
           </div>
 
           <div className='flex flex-col items-center gap-6'>
