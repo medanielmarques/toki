@@ -1,13 +1,14 @@
-import { Header } from '@/header'
+import { ProfileSettingsMenu } from '@/components/profile-settings-menu'
+import { SettingsDialog } from '@/components/settings-dialog'
+import { SwitchActivityMenu } from '@/components/switch-activity-menu'
+import { Head } from '@/header'
 import { useSounds } from '@/lib/hooks/use-sounds'
 import {
-  activityCount,
   defaultSettings,
   useSettings,
   useSettingsActions,
 } from '@/lib/stores/settings-store'
 import {
-  type Activity,
   useCurrentActivity,
   useIsTimerActive,
   useTimer,
@@ -81,33 +82,31 @@ export default function Pomodoro() {
 
   return (
     <>
-      <Header />
+      <Head />
 
-      <div className='mt-40 flex justify-center'>
-        <div className='text-center'>
-          <div className='flex flex-col content-center items-center justify-between gap-16 rounded-2xl bg-[#c75858fd] py-10 px-20'>
-            <div className='flex items-center gap-4'>
-              <ActivityButton activity='pomodoro' label='Pomodoro' />
-              <ActivityButton activity='shortBreak' label='Short Break' />
-              <ActivityButton activity='longBreak' label='Long Break' />
-            </div>
+      <div className='flex h-screen flex-col items-center justify-between gap-6 px-4 pt-8 pb-6'>
+        <div className='container flex flex-col gap-12'>
+          <div className='mx-auto flex items-center gap-2'>
+            <SettingsDialog />
+            <ProfileSettingsMenu />
+          </div>
 
+          <div className='flex flex-col items-center gap-6'>
             <Timer />
 
-            <button
-              className='w-9/12 rounded-lg border-2 border-white px-8 py-6 text-3xl font-bold text-white  hover:bg-white hover:text-[#bb3e4a]'
-              onClick={() => {
-                timerActions.toggleTimer()
-                playToggleTimerSound()
-              }}
-            >
-              {isTimerActive ? 'PAUSE' : 'START'}
-            </button>
+            <SwitchActivityMenu />
           </div>
-          <p className='mt-6 text-xl text-gray-200'>
-            You&apos;ve done #{activityCount()} {currentActivity}s!
-          </p>
         </div>
+
+        <button
+          className='container max-w-xl rounded-3xl bg-white/75 px-8 py-5 text-2xl font-medium text-black'
+          onClick={() => {
+            timerActions.toggleTimer()
+            playToggleTimerSound()
+          }}
+        >
+          {isTimerActive ? 'Stop' : 'Start'} timer
+        </button>
       </div>
     </>
   )
@@ -122,8 +121,6 @@ const Timer = () => {
     const timeLimit = settings[`${currentActivity}Time`] / 1000
     const timeLeft = timer / 1000
 
-    console.log(timeLeft, 'timeLimit')
-
     const rawTimeFraction = timeLeft / timeLimit
 
     const timeFraction =
@@ -133,21 +130,21 @@ const Timer = () => {
   }
 
   return (
-    <div className='relative h-80 w-80'>
+    <div className='relative h-56 w-56 md:h-72 md:w-72'>
       <svg
-        className='scale-x-100'
+        className='scale-x-[-1]'
         viewBox='0 0 100 100'
         xmlns='http://www.w3.org/2000/svg'
       >
         <g className='fill-none stroke-none'>
           <circle
-            className='stroke-gray-300 stroke-[7px]'
+            className='stroke-white/25 stroke-[7px]'
             cx='50'
             cy='50'
             r='45'
           />
           <path
-            stroke-dasharray={`${calculateTimeFraction()} 283`}
+            strokeDasharray={`${calculateTimeFraction()} 283`}
             className='base-timer__path-remaining'
             d='
                 M 50, 50
@@ -158,32 +155,9 @@ const Timer = () => {
           />
         </g>
       </svg>
-      <span className='absolute top-0 flex h-80 w-80 items-center justify-center text-5xl'>
+      <span className='absolute top-0 flex h-56 w-56 items-center justify-center text-4xl md:h-72 md:w-72 md:text-5xl'>
         {timerUtils.formatTime(timer)}
       </span>
     </div>
-  )
-}
-
-const ActivityButton = (props: { label: string; activity: Activity }) => {
-  const currentActivity = useCurrentActivity()
-  const timerActions = useTimerActions()
-
-  const utils = api.useContext()
-
-  return (
-    <button
-      className={`rounded-2xl py-3 px-6 text-lg font-bold ${
-        props.activity === currentActivity
-          ? 'bg-[#b04646fd]'
-          : 'hover:bg-[#ae5656fd]'
-      }`}
-      onClick={() => {
-        timerActions.switchActivity(props.activity)
-        utils.userSettings.get.invalidate()
-      }}
-    >
-      {props.label}
-    </button>
   )
 }

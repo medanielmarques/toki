@@ -6,9 +6,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useCurrentActivity } from '@/lib/stores/timer-store'
+import { type Activity, useCurrentActivity } from '@/lib/stores/timer-store'
 import { timerUtils } from '@/utils/timer'
 import { ChevronDown } from 'lucide-react'
+
+const switchActivityMenuFirstItem = (currentActivity: Activity) => {
+  switch (currentActivity) {
+    case 'pomodoro':
+      return 'Short Break'
+    default:
+      return 'Pomodoro'
+  }
+}
+
+const switchActivityMenuSecondItem = (currentActivity: Activity) => {
+  switch (currentActivity) {
+    case 'pomodoro' || 'shortBreak':
+      return 'Long Break'
+    default:
+      return 'Short Break'
+  }
+}
 
 export const SwitchActivityMenu = () => {
   const currentActivity = useCurrentActivity()
@@ -30,7 +48,7 @@ export const SwitchActivityMenu = () => {
             className='mr-4 flex justify-center text-xl font-bold text-white hover:bg-none focus:bg-none dark:hover:bg-none dark:focus:bg-none md:text-2xl'
             onClick={() => 1}
           >
-            <span>Short Break</span>
+            <span>{switchActivityMenuFirstItem(currentActivity)}</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -39,7 +57,7 @@ export const SwitchActivityMenu = () => {
             className='mr-4 flex justify-center text-xl font-bold text-white hover:bg-none md:text-2xl'
             onClick={() => 1}
           >
-            <span>Long Break</span>
+            <span>{switchActivityMenuSecondItem(currentActivity)}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
