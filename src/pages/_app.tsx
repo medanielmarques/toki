@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import { api } from '@/utils/api'
 import { Nunito } from '@next/font/google'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Analytics } from '@vercel/analytics/react'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
@@ -19,6 +20,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <main className={`${nunito.variable} font-sans`}>
         <Component {...pageProps} />
+        <Analytics />
         {/* <ReactQueryDevtools /> */}
       </main>
     </SessionProvider>
