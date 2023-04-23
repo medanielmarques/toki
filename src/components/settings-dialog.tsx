@@ -10,10 +10,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSettings, useSettingsActions } from '@/lib/stores/settings-store'
+import { useTimerActions } from '@/lib/stores/timer-store'
 import { api } from '@/utils/api'
+import { Settings2 } from 'lucide-react'
 import { useState } from 'react'
 
 export const SettingsDialog = () => {
+  const timerActions = useTimerActions()
   const settings = useSettings()
   const settingsActions = useSettingsActions()
 
@@ -23,6 +26,7 @@ export const SettingsDialog = () => {
 
   const saveNewSettings = async () => {
     utils.userSettings.get.setData(undefined, settings)
+    timerActions.toggleTimer()
 
     return await settingsActions
       .persistNewSettings()
@@ -32,13 +36,16 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>Settings</Button>
+        <div className='flex cursor-pointer items-center gap-2 rounded-3xl py-2 px-4 hover:bg-white/20'>
+          <span className='text-white/90 md:text-lg'>Settings</span>
+          <Settings2 size={24} />
+        </div>
       </DialogTrigger>
 
       <DialogContent
         onInteractOutside={saveNewSettings}
         onEscapeKeyDown={saveNewSettings}
-        className='sm:max-w-[425px]'
+        className='font-sans sm:max-w-[425px]'
       >
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
