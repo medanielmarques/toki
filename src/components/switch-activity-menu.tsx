@@ -6,9 +6,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type Activity, useCurrentActivity } from '@/lib/stores/timer-store'
+import {
+  type Activity,
+  useCurrentActivity,
+  useTimerActions,
+} from '@/lib/stores/timer-store'
+import { api } from '@/utils/api'
 import { timerUtils } from '@/utils/timer'
 import { ChevronDown } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 
 const switchActivityMenuFirstItem = (currentActivity: Activity) => {
   switch (currentActivity) {
@@ -21,7 +27,7 @@ const switchActivityMenuFirstItem = (currentActivity: Activity) => {
 
 const switchActivityMenuSecondItem = (currentActivity: Activity) => {
   switch (currentActivity) {
-    case 'shortBreak':
+    case 'pomodoro':
       return 'Long Break'
     case 'shortBreak':
       return 'Long Break'
@@ -32,6 +38,9 @@ const switchActivityMenuSecondItem = (currentActivity: Activity) => {
 
 export const SwitchActivityMenu = () => {
   const currentActivity = useCurrentActivity()
+  const timerActions = useTimerActions()
+  const session = useSession()
+  const utils = api.useContext()
 
   return (
     <DropdownMenu>
@@ -44,11 +53,16 @@ export const SwitchActivityMenu = () => {
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-56 bg-transparent md:w-72'>
+      <DropdownMenuContent className=' w-[201px] bg-transparent md:w-[259px]'>
         <DropdownMenuGroup className='text-center'>
           <DropdownMenuItem
-            className='mr-4 flex justify-center text-xl font-bold text-white hover:bg-none focus:bg-none dark:hover:bg-none dark:focus:bg-none md:text-2xl'
-            onClick={() => 1}
+            className='mr-4 flex justify-center text-xl font-bold text-white md:text-2xl'
+            onClick={() =>
+              timerActions.decideNextActivity(
+                session.status,
+                utils.userSettings.get.invalidate,
+              )
+            }
           >
             <span>{switchActivityMenuFirstItem(currentActivity)}</span>
           </DropdownMenuItem>
@@ -56,8 +70,13 @@ export const SwitchActivityMenu = () => {
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
-            className='mr-4 flex justify-center text-xl font-bold text-white hover:bg-none md:text-2xl'
-            onClick={() => 1}
+            className='mr-4 flex justify-center text-xl font-bold text-white md:text-2xl'
+            onClick={() =>
+              timerActions.decideNextActivity(
+                session.status,
+                utils.userSettings.get.invalidate,
+              )
+            }
           >
             <span>{switchActivityMenuSecondItem(currentActivity)}</span>
           </DropdownMenuItem>
