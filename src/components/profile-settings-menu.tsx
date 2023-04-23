@@ -32,12 +32,16 @@ export const ProfileSettingsMenu = () => {
 
         <DropdownMenuGroup>
           {session.status === 'authenticated' ? (
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem
+              className='focus:bg-slate-100'
+              onClick={() => signOut()}
+            >
               <LogOut className='mr-2 h-4 w-4' />
               <span>Sign out</span>
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem
+              className='focus:bg-slate-100'
               onClick={() => signIn('google', { callbackUrl: '/' })}
             >
               <LogIn className='mr-2 h-4 w-4' />

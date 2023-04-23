@@ -1,5 +1,6 @@
 import { ProfileSettingsMenu } from '@/components/profile-settings-menu'
 import { SettingsDialog } from '@/components/settings-dialog'
+import { SwitchActivityMenu } from '@/components/switch-activity-menu'
 import { Head } from '@/header'
 import { useSounds } from '@/lib/hooks/use-sounds'
 import {
@@ -92,9 +93,8 @@ export default function Pomodoro() {
 
           <div className='flex flex-col items-center gap-6'>
             <Timer />
-            <p className='text-xl text-white/100 md:text-2xl'>
-              {timerUtils.formattedCurrentActivity(currentActivity)}
-            </p>
+
+            <SwitchActivityMenu />
           </div>
         </div>
 

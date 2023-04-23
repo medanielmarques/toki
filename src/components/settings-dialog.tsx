@@ -45,7 +45,7 @@ export const SettingsDialog = () => {
       <DialogContent
         onInteractOutside={saveNewSettings}
         onEscapeKeyDown={saveNewSettings}
-        className='sm:max-w-[425px]'
+        className='font-sans sm:max-w-[425px]'
       >
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>

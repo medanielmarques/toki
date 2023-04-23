@@ -6,9 +6,8 @@ import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
 
-const nunito = Nunito({
+export const nunito = Nunito({
   subsets: ['latin'],
-  weight: '700',
   variable: '--font-nunito',
 })
 
