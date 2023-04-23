@@ -21,7 +21,9 @@ const switchActivityMenuFirstItem = (currentActivity: Activity) => {
 
 const switchActivityMenuSecondItem = (currentActivity: Activity) => {
   switch (currentActivity) {
-    case 'pomodoro' || 'shortBreak':
+    case 'shortBreak':
+      return 'Long Break'
+    case 'shortBreak':
       return 'Long Break'
     default:
       return 'Short Break'
