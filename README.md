@@ -1,10 +1,4 @@
-# Toki is a Free and Open-Source Pomodoro Timer App.
-
-## [Acess Toki Now](https://tokitoki.app)
-
-<hr>
-
-## Installation Instructions
+# Installation Instructions
 
 ### Toki is hosted on [tokitoki.app](https://tokitoki.app), and you can use it for free. But if you wanna self host, here's how:
 
